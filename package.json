@@ -1,0 +1,36 @@
+{
+  "name": "the-movier-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node-dev --exit-child src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onlyarte/the-movier-api.git"
+  },
+  "keywords": [],
+  "author": "Ruslan Purii <ruslanpurii@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/onlyarte/the-movier-api/issues"
+  },
+  "homepage": "https://github.com/onlyarte/the-movier-api#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.4",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "@graphql-tools/schema": "^8.3.1",
+    "fastify": "^3.25.2",
+    "graphql": "^16.2.0",
+    "graphql-helix": "^1.11.0",
+    "graphql-import-node": "0.0.4",
+    "node-fetch": "^3.1.0"
+  }
+}
