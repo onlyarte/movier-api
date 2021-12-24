@@ -1,16 +1,18 @@
 type Query {
   search(query: String!): [Movie!]!
+  movie(id: ID!): Movie!
 }
 
 type Movie {
   id: ID!
   title: String!
-  description: String!
+  description: String
+  poster: String
   year: Int!
   countries: [String!]!
   genres: [String!]!
-  directors: [String!]!
-  writers: [String!]!
-  stars: [String!]!
+  directors: [String!]
+  writers: [String!]
+  stars: [String!]
   rating: Float!
 }
