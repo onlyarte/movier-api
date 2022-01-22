@@ -1,10 +1,35 @@
 type Query {
   search(query: String!): [Movie!]!
-  movie(id: ID!): Movie!
+  movie(id: Int!): Movie!
+  list(id: String!): List
+}
+
+scalar Date
+
+type User {
+  id: ID!
+  email: String!
+  name: String!
+  photoUrl: String!
+  following: [User!]!
+  followers: [User!]!
+  lists: [List!]!
+  savedLists: [List!]!
+}
+
+type List {
+  id: ID!
+  title: String!
+  description: String
+  cover: String
+  createdAt: Date!
+  updatedAt: Date!
+  movies: [Movie!]!
+  owner: User!
 }
 
 type Movie {
-  id: ID!
+  id: Int!
   title: String!
   description: String
   poster: String

@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  photoUrl  String
+  createdAt DateTime @default(now())
+
+  following User[] @relation("UserFollowsUser")
+  followers User[] @relation("UserFollowsUser")
+
+  lists List[] @relation("UserOwnsList")
+
+  savedLists List[] @relation("UserSavesList")
+}
+
+model List {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  cover       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  movies Movie[] @relation("ListContainsMovie")
+
+  ownerId String
+  owner   User   @relation(name: "UserOwnsList", fields: [ownerId], references: [id])
+
+  savedBy User[] @relation("UserSavesList")
+}
+
+model Movie {
+  id          Int      @id
+  title       String
+  description String?
+  poster      String?
+  year        Int
+  countries   String[]
+  genres      String[]
+  directors   String[]
+  writers     String[]
+  stars       String[]
+  rating      Float
+
+  lists List[] @relation("ListContainsMovie")
+}
