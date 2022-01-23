@@ -1,7 +1,22 @@
 type Query {
-  search(query: String!): [Movie!]!
-  movie(id: Int!): Movie!
+  user(id: String!): User
   list(id: String!): List
+  movie(id: Int!): Movie!
+  search(query: String!): [Movie!]!
+}
+
+type Mutation {
+  signup(input: SignupInput!): LoginOutput!
+  login(input: LoginInput!): LoginOutput!
+  followUser(id: String!): Boolean!
+  unfollowUser(id: String!): Boolean!
+  createList(input: CreateListInput!): List!
+  updateList(id: String!, input: UpdateListInput!): List!
+  deleteList(id: String!): Boolean!
+  saveList(id: String!): Boolean!
+  unsaveList(id: String!): Boolean!
+  pushMovie(listId: String!, movieId: Int!): Boolean!
+  pullMovie(listId: String!, movieId: Int!): Boolean!
 }
 
 scalar Date
@@ -17,6 +32,23 @@ type User {
   savedLists: [List!]!
 }
 
+input SignupInput {
+  email: String!
+  password: String!
+  name: String!
+  photoUrl: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type LoginOutput {
+  user: User!
+  token: String!
+}
+
 type List {
   id: ID!
   title: String!
@@ -26,6 +58,18 @@ type List {
   updatedAt: Date!
   movies: [Movie!]!
   owner: User!
+}
+
+input CreateListInput {
+  title: String!
+  description: String
+  cover: String
+}
+
+input UpdateListInput {
+  title: String
+  description: String
+  cover: String
 }
 
 type Movie {

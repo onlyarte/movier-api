@@ -6,10 +6,20 @@ import scalars from './utils/scalars';
 
 const resolvers: Resolvers<GraphQLContext> = {
   Query: {
-    search: (parent, args, context, info) => context.tmdb.search(args.query),
-    movie: (parent, args, context, info) => context.tmdb.getMovie(args.id),
-    list: (parent, args, context, info) =>
-      context.prisma.list.findUnique({ where: { id: args.id } }),
+    user: (parent, args, context, info) =>
+      context.prisma.user.findUnique({
+        where: { id: args.id },
+        select: { password: false },
+      }),
+    list: (parent, args, context, info) => {
+      return context.prisma.list.findUnique({ where: { id: args.id } });
+    },
+    movie: (parent, args, context, info) => {
+      return context.services.tmdb.get(args.id);
+    },
+    search: (parent, args, context, info) => {
+      return context.services.tmdb.search(args.query);
+    },
   },
   List: {
     owner: async (parent, args, context, info) => {

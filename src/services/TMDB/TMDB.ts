@@ -4,7 +4,7 @@ import { Configuration, ParsedMovie, RawMovie, RawSearch } from './types';
 
 const BASE_URL = 'https://api.themoviedb.org/3';
 
-class TheMovieDB {
+class TheMovieDBService {
   private apiKey: string;
   private configuration: Configuration | null;
   private api: AxiosInstance;
@@ -39,7 +39,7 @@ class TheMovieDB {
     return base_url + poster_sizes[poster_sizes.length - 1] + path;
   }
 
-  private async parseMovie(rawMovie: RawMovie) {
+  private async parse(rawMovie: RawMovie) {
     return {
       id: rawMovie.id,
       title: rawMovie.title,
@@ -52,12 +52,12 @@ class TheMovieDB {
     } as ParsedMovie;
   }
 
-  async getMovie(id: number) {
+  async get(id: number) {
     const response = await this.api.get(
       `/movie/${id}?language=en-US&api_key=${this.apiKey}`
     );
     const rawMovie = response.data as RawMovie;
-    return this.parseMovie(rawMovie);
+    return this.parse(rawMovie);
   }
 
   async search(query: string) {
@@ -66,8 +66,8 @@ class TheMovieDB {
       `/search/movie?query=${safeQuery}&language=en-US&page=1&include_adult=true&api_key=${this.apiKey}`
     );
     const { results } = response.data as RawSearch;
-    return Promise.all(results.map((one) => this.getMovie(one.id)));
+    return Promise.all(results.map((one) => this.get(one.id)));
   }
 }
 
-export default TheMovieDB;
+export default TheMovieDBService;
