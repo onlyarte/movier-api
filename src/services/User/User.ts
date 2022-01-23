@@ -7,7 +7,7 @@ class UserService {
     this.prisma = prisma;
   }
 
-  find(id: string) {
+  get(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
       select: { password: false },
