@@ -254,42 +254,42 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Boolean: ResolverTypeWrapper<Partial<Scalars['Boolean']>>;
-  CreateListInput: ResolverTypeWrapper<Partial<CreateListInput>>;
-  Date: ResolverTypeWrapper<Partial<Scalars['Date']>>;
-  Float: ResolverTypeWrapper<Partial<Scalars['Float']>>;
-  ID: ResolverTypeWrapper<Partial<Scalars['ID']>>;
-  Int: ResolverTypeWrapper<Partial<Scalars['Int']>>;
-  List: ResolverTypeWrapper<Partial<List>>;
-  LoginInput: ResolverTypeWrapper<Partial<LoginInput>>;
-  LoginOutput: ResolverTypeWrapper<Partial<LoginOutput>>;
-  Movie: ResolverTypeWrapper<Partial<Movie>>;
+  Boolean: ResolverTypeWrapper<DeepPartial<T>>;
+  CreateListInput: ResolverTypeWrapper<DeepPartial<T>>;
+  Date: ResolverTypeWrapper<DeepPartial<T>>;
+  Float: ResolverTypeWrapper<DeepPartial<T>>;
+  ID: ResolverTypeWrapper<DeepPartial<T>>;
+  Int: ResolverTypeWrapper<DeepPartial<T>>;
+  List: ResolverTypeWrapper<DeepPartial<T>>;
+  LoginInput: ResolverTypeWrapper<DeepPartial<T>>;
+  LoginOutput: ResolverTypeWrapper<DeepPartial<T>>;
+  Movie: ResolverTypeWrapper<DeepPartial<T>>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
-  SignupInput: ResolverTypeWrapper<Partial<SignupInput>>;
-  String: ResolverTypeWrapper<Partial<Scalars['String']>>;
-  UpdateListInput: ResolverTypeWrapper<Partial<UpdateListInput>>;
-  User: ResolverTypeWrapper<Partial<User>>;
+  SignupInput: ResolverTypeWrapper<DeepPartial<T>>;
+  String: ResolverTypeWrapper<DeepPartial<T>>;
+  UpdateListInput: ResolverTypeWrapper<DeepPartial<T>>;
+  User: ResolverTypeWrapper<DeepPartial<T>>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Boolean: Partial<Scalars['Boolean']>;
-  CreateListInput: Partial<CreateListInput>;
-  Date: Partial<Scalars['Date']>;
-  Float: Partial<Scalars['Float']>;
-  ID: Partial<Scalars['ID']>;
-  Int: Partial<Scalars['Int']>;
-  List: Partial<List>;
-  LoginInput: Partial<LoginInput>;
-  LoginOutput: Partial<LoginOutput>;
-  Movie: Partial<Movie>;
+  Boolean: DeepPartial<T>;
+  CreateListInput: DeepPartial<T>;
+  Date: DeepPartial<T>;
+  Float: DeepPartial<T>;
+  ID: DeepPartial<T>;
+  Int: DeepPartial<T>;
+  List: DeepPartial<T>;
+  LoginInput: DeepPartial<T>;
+  LoginOutput: DeepPartial<T>;
+  Movie: DeepPartial<T>;
   Mutation: {};
   Query: {};
-  SignupInput: Partial<SignupInput>;
-  String: Partial<Scalars['String']>;
-  UpdateListInput: Partial<UpdateListInput>;
-  User: Partial<User>;
+  SignupInput: DeepPartial<T>;
+  String: DeepPartial<T>;
+  UpdateListInput: DeepPartial<T>;
+  User: DeepPartial<T>;
 };
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {

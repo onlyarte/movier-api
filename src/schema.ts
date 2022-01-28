@@ -22,6 +22,14 @@ const resolvers: ResolversWithContext = {
       return context.services.tmdb.search(args.query);
     },
   },
+  Mutation: {
+    signup: (parent, args, context, info) => {
+      return context.services.user.signup(args.input);
+    },
+    login: (parent, args, context, info) => {
+      return context.services.user.login(args.input);
+    },
+  },
   List: makeObjectResolvers('list', [
     'owner',
     'movies',

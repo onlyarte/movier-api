@@ -1,8 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { FastifyRequest } from 'fastify';
+import { PrismaClient, User } from '@prisma/client';
 
 import TMDBService from './services/TMDB';
 import UserService from './services/User';
 import ListService from './services/List';
+import { verify } from './utils/jwt';
 
 const prisma = new PrismaClient();
 
@@ -10,7 +12,6 @@ const tmdbService = new TMDBService(process.env.TMDB_API_KEY as string);
 tmdbService.init().catch((e) => console.log(e));
 
 const userService = new UserService(prisma);
-
 const listService = new ListService(prisma);
 
 const services = {
@@ -26,8 +27,30 @@ export type GraphQLContext = {
     user: UserService;
     list: ListService;
   };
+  currentUser: User | null;
 };
 
-export async function contextFactory(): Promise<GraphQLContext> {
-  return { prisma, services };
+async function authenticateUser(
+  prisma: PrismaClient,
+  request: FastifyRequest
+): Promise<User | null> {
+  if (request.headers.authorization) {
+    const token = request.headers.authorization.split(' ')[1];
+    const tokenPayload = verify(token);
+    const userId = tokenPayload.userId;
+
+    return await prisma.user.findUnique({ where: { id: userId } });
+  }
+
+  return null;
+}
+
+export async function contextFactory(
+  request: FastifyRequest
+): Promise<GraphQLContext> {
+  return {
+    prisma,
+    services,
+    currentUser: await authenticateUser(prisma, request),
+  };
 }

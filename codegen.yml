@@ -7,4 +7,4 @@ generates:
       - "typescript"
       - "typescript-resolvers"
     config:
-      defaultMapper: Partial<{T}>
+      defaultMapper: DeepPartial<T>
