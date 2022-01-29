@@ -4,6 +4,7 @@ import { GraphQLContext } from './context';
 import typeDefs from './schema.graphql';
 import { makeObjectResolvers } from './utils/generators';
 import scalars from './utils/scalars';
+import { assertCurrentUser } from './utils/validators';
 
 type ResolversWithContext = Resolvers<GraphQLContext>;
 
@@ -28,6 +29,43 @@ const resolvers: ResolversWithContext = {
     },
     login: (parent, args, context, info) => {
       return context.services.user.login(args.input);
+    },
+    followUser: (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      return context.services.user.follow(currentUser.id, args.id);
+    },
+    unfollowUser: (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      return context.services.user.unfollow(currentUser.id, args.id);
+    },
+    createList: (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      return context.services.list.create(args.input, currentUser.id);
+    },
+    updateList: (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      return context.services.list.update(args.id, args.input, currentUser.id);
+    },
+    deleteList: (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      return context.services.list.delete(args.id, currentUser.id);
+    },
+    saveList: (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      return context.services.list.save(args.id, currentUser.id);
+    },
+    unsaveList: (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      return context.services.list.unsave(args.id, currentUser.id);
+    },
+    pushMovie: async (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      const movie = await context.services.tmdb.get(args.movieId);
+      return await context.services.list.pushMovie(args.listId, movie, currentUser.id);
+    },
+    pullMovie: (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      return context.services.list.pullMovie(args.listId, args.movieId, currentUser.id);
     },
   },
   List: makeObjectResolvers('list', [
