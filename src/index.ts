@@ -4,7 +4,6 @@ import {
   getGraphQLParameters,
   processRequest,
   renderGraphiQL,
-  Request,
   sendResult,
 } from 'graphql-helix';
 
@@ -30,21 +29,14 @@ async function main() {
   server.route({
     method: 'POST',
     url: '/graphql',
-    handler: async (req, reply) => {
-      const request: Request = {
-        headers: req.headers,
-        method: req.method,
-        query: req.query,
-        body: req.body,
-      };
-
+    handler: async (request, reply) => {
       const { operationName, query, variables } = getGraphQLParameters(request);
 
       const result = await processRequest({
         request,
         schema,
         operationName,
-        contextFactory,
+        contextFactory: () => contextFactory(request),
         query,
         variables,
       });
