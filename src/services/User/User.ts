@@ -1,4 +1,4 @@
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { LoginInput, SignupInput } from '../../generated/graphql';
 import { decrypt, encrypt } from '../../utils/crypto';
 import { sign } from '../../utils/jwt';

@@ -7,4 +7,6 @@ generates:
       - "typescript"
       - "typescript-resolvers"
     config:
-      defaultMapper: DeepPartial<T>
+      mappers:
+        User: '@prisma/client#User as UserModel'
+        List: '@prisma/client#List as ListModel'

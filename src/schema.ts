@@ -30,13 +30,15 @@ const resolvers: ResolversWithContext = {
     login: (parent, args, context, info) => {
       return context.services.user.login(args.input);
     },
-    followUser: (parent, args, context, info) => {
+    followUser: async (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
-      return context.services.user.follow(currentUser.id, args.id);
+      await context.services.user.follow(currentUser.id, args.id);
+      return true;
     },
-    unfollowUser: (parent, args, context, info) => {
+    unfollowUser: async (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
-      return context.services.user.unfollow(currentUser.id, args.id);
+      await context.services.user.unfollow(currentUser.id, args.id);
+      return true;
     },
     createList: (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
@@ -61,23 +63,28 @@ const resolvers: ResolversWithContext = {
     pushMovie: async (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
       const movie = await context.services.tmdb.get(args.movieId);
-      return await context.services.list.pushMovie(args.listId, movie, currentUser.id);
+      return await context.services.list.pushMovie(
+        args.listId,
+        movie,
+        currentUser.id
+      );
     },
     pullMovie: (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
-      return context.services.list.pullMovie(args.listId, args.movieId, currentUser.id);
+      return context.services.list.pullMovie(
+        args.listId,
+        args.movieId,
+        currentUser.id
+      );
     },
   },
-  List: makeObjectResolvers('list', [
-    'owner',
-    'movies',
-  ]) as ResolversWithContext['List'],
+  List: makeObjectResolvers('list', ['owner', 'movies']),
   User: makeObjectResolvers('user', [
     'followers',
     'following',
     'lists',
     'savedLists',
-  ]) as ResolversWithContext['User'],
+  ]),
   ...scalars,
 };
 

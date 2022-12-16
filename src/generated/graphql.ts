@@ -1,9 +1,11 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { User as UserModel, List as ListModel } from '@prisma/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -254,42 +256,42 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Boolean: ResolverTypeWrapper<DeepPartial<T>>;
-  CreateListInput: ResolverTypeWrapper<DeepPartial<T>>;
-  Date: ResolverTypeWrapper<DeepPartial<T>>;
-  Float: ResolverTypeWrapper<DeepPartial<T>>;
-  ID: ResolverTypeWrapper<DeepPartial<T>>;
-  Int: ResolverTypeWrapper<DeepPartial<T>>;
-  List: ResolverTypeWrapper<DeepPartial<T>>;
-  LoginInput: ResolverTypeWrapper<DeepPartial<T>>;
-  LoginOutput: ResolverTypeWrapper<DeepPartial<T>>;
-  Movie: ResolverTypeWrapper<DeepPartial<T>>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  CreateListInput: CreateListInput;
+  Date: ResolverTypeWrapper<Scalars['Date']>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  List: ResolverTypeWrapper<ListModel>;
+  LoginInput: LoginInput;
+  LoginOutput: ResolverTypeWrapper<Omit<LoginOutput, 'user'> & { user: ResolversTypes['User'] }>;
+  Movie: ResolverTypeWrapper<Movie>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
-  SignupInput: ResolverTypeWrapper<DeepPartial<T>>;
-  String: ResolverTypeWrapper<DeepPartial<T>>;
-  UpdateListInput: ResolverTypeWrapper<DeepPartial<T>>;
-  User: ResolverTypeWrapper<DeepPartial<T>>;
+  SignupInput: SignupInput;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  UpdateListInput: UpdateListInput;
+  User: ResolverTypeWrapper<UserModel>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Boolean: DeepPartial<T>;
-  CreateListInput: DeepPartial<T>;
-  Date: DeepPartial<T>;
-  Float: DeepPartial<T>;
-  ID: DeepPartial<T>;
-  Int: DeepPartial<T>;
-  List: DeepPartial<T>;
-  LoginInput: DeepPartial<T>;
-  LoginOutput: DeepPartial<T>;
-  Movie: DeepPartial<T>;
+  Boolean: Scalars['Boolean'];
+  CreateListInput: CreateListInput;
+  Date: Scalars['Date'];
+  Float: Scalars['Float'];
+  ID: Scalars['ID'];
+  Int: Scalars['Int'];
+  List: ListModel;
+  LoginInput: LoginInput;
+  LoginOutput: Omit<LoginOutput, 'user'> & { user: ResolversParentTypes['User'] };
+  Movie: Movie;
   Mutation: {};
   Query: {};
-  SignupInput: DeepPartial<T>;
-  String: DeepPartial<T>;
-  UpdateListInput: DeepPartial<T>;
-  User: DeepPartial<T>;
+  SignupInput: SignupInput;
+  String: Scalars['String'];
+  UpdateListInput: UpdateListInput;
+  User: UserModel;
 };
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {

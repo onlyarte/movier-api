@@ -1,5 +1,7 @@
 import 'graphql-import-node';
 import fastify from 'fastify';
+import multipart from 'fastify-multipart';
+
 import {
   getGraphQLParameters,
   processRequest,
@@ -9,14 +11,33 @@ import {
 
 import { schema } from './schema';
 import { contextFactory } from './context';
+import StorageService from './services/Storage';
 
 async function main() {
   const server = fastify();
 
+  server.register(multipart);
+  const storageService = new StorageService();
+
+  server.route({
+    method: 'POST',
+    url: '/files',
+    handler: async (request, reply) => {
+      const file = await request.file({ limits: { fileSize: 1000000 } });
+      try {
+        const url = await storageService.upload(file);
+        reply.send(url);
+      } catch (error) {
+        console.log(error);
+        reply.send(500);
+      }
+    },
+  });
+
   server.route({
     method: 'GET',
     url: '/graphql',
-    handler: async (req, reply) => {
+    handler: async (request, reply) => {
       reply.header('Content-Type', 'text/html');
       reply.send(
         renderGraphiQL({
