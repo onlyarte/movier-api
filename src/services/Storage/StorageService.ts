@@ -3,7 +3,7 @@ import { MultipartFile } from 'fastify-multipart';
 import crypto from 'crypto';
 import path from 'path';
 
-import config from './config';
+import config from '../../config';
 
 class StorageService {
   private cloudStorage: Storage;

@@ -1,14 +1,16 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { Resolvers } from './generated/graphql';
 import { GraphQLContext } from './context';
-import typeDefs from './schema.graphql';
 import { makeObjectResolvers } from './utils/generators';
 import scalars from './utils/scalars';
 import { assertCurrentUser } from './utils/validators';
 
+/// <reference path="../node_modules/graphql-import-node/register.d.ts" />
+import typeDefs from './schema.graphql';
+
 type ResolversWithContext = Resolvers<GraphQLContext>;
 
-const resolvers: ResolversWithContext = {
+export const resolvers: ResolversWithContext = {
   Query: {
     user: (parent, args, context, info) => {
       return context.services.user.get(args.id);

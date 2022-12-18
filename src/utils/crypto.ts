@@ -1,14 +1,15 @@
 import crypto from 'crypto';
 
+import config from '../config';
+
 const CRYPTO_ALGORITHM = 'aes-256-cbc' as const;
-const CRYPTO_KEY = process.env.CRYPTO_KEY as string;
 
 export function encrypt(text: string) {
   const initVector = crypto.randomBytes(16);
 
   const cipher = crypto.createCipheriv(
     CRYPTO_ALGORITHM,
-    CRYPTO_KEY,
+    config.cryptoKey,
     initVector
   );
 
@@ -24,7 +25,7 @@ export function decrypt(text: string) {
 
   const decipher = crypto.createDecipheriv(
     CRYPTO_ALGORITHM,
-    CRYPTO_KEY,
+    config.cryptoKey,
     initVector
   );
 

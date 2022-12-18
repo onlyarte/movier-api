@@ -9,9 +9,10 @@ import {
   sendResult,
 } from 'graphql-helix';
 
-import { schema } from './schema';
+import { schema } from './resolvers';
 import { contextFactory } from './context';
 import StorageService from './services/Storage';
+import config from './config';
 
 async function main() {
   const server = fastify();
@@ -66,8 +67,8 @@ async function main() {
     },
   });
 
-  server.listen(3000, '0.0.0.0', () => {
-    console.log(`Server is running on http://localhost:3000/`);
+  server.listen(config.port, '0.0.0.0', () => {
+    console.log(`Server is running on http://localhost:${config.port}/`);
   });
 }
 

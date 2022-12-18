@@ -5,10 +5,11 @@ import TMDBService from './services/TMDB';
 import UserService from './services/User';
 import ListService from './services/List';
 import { verify } from './utils/jwt';
+import config from './config';
 
 const prisma = new PrismaClient();
 
-const tmdbService = new TMDBService(process.env.TMDB_API_KEY as string);
+const tmdbService = new TMDBService(config.tmdbApiKey);
 tmdbService.init().catch((e) => console.log(e));
 
 const userService = new UserService(prisma);
