@@ -1,6 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { User as UserModel, List as ListModel } from '@prisma/client';
-import { ParsedMovie as MovieModel } from './src/TMDB/types';
+import { ParsedMovie as MovieModel } from 'src/services/TMDB/types';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
