@@ -19,7 +19,7 @@ export type RawSearch = {
   }>;
   total_results: number;
   total_pages: number;
-}
+};
 
 export type RawMovie = {
   id: number;
@@ -35,10 +35,11 @@ export type RawMovie = {
     name: string;
   }>;
   vote_average: number;
-}
+};
 
 export type ParsedMovie = {
-  id: number;
+  tmdbId: number;
+  imdbId?: string;
   title: string;
   description?: string;
   poster?: string;
@@ -49,4 +50,4 @@ export type ParsedMovie = {
   writers?: string[];
   stars?: string[];
   rating: number;
-}
+};

@@ -41,7 +41,8 @@ class TheMovieDBService {
 
   private async parse(rawMovie: RawMovie) {
     return {
-      id: rawMovie.id,
+      tmdbId: rawMovie.id,
+      imdbId: rawMovie.imdb_id,
       title: rawMovie.title,
       description: rawMovie.overview,
       poster: await this.makePoster(rawMovie.poster_path),

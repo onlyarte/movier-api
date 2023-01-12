@@ -80,6 +80,11 @@ export const resolvers: ResolversWithContext = {
       );
     },
   },
+  Movie: {
+    id: (parent) => {
+      return parent.tmdbId;
+    },
+  },
   List: makeObjectResolvers('list', ['owner', 'movies']),
   User: makeObjectResolvers('user', [
     'followers',

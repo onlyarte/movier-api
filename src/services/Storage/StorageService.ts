@@ -19,7 +19,7 @@ class StorageService {
     const uploadedFile = this.cloudStorage.bucket(config.bucket).file(key);
     await uploadedFile.save(buffer);
 
-    return uploadedFile.publicUrl;
+    return uploadedFile.publicUrl();
   }
 
   private generateKey(fileName: string) {

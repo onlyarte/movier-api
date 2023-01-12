@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { User as UserModel, List as ListModel } from '@prisma/client';
+import { ParsedMovie as MovieModel } from './src/TMDB/types';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -53,6 +54,7 @@ export type Movie = {
   directors?: Maybe<Array<Scalars['String']>>;
   genres: Array<Scalars['String']>;
   id: Scalars['Int'];
+  imdbId?: Maybe<Scalars['String']>;
   poster?: Maybe<Scalars['String']>;
   rating: Scalars['Float'];
   stars?: Maybe<Array<Scalars['String']>>;
@@ -265,7 +267,7 @@ export type ResolversTypes = {
   List: ResolverTypeWrapper<ListModel>;
   LoginInput: LoginInput;
   LoginOutput: ResolverTypeWrapper<Omit<LoginOutput, 'user'> & { user: ResolversTypes['User'] }>;
-  Movie: ResolverTypeWrapper<Movie>;
+  Movie: ResolverTypeWrapper<MovieModel>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   SignupInput: SignupInput;
@@ -285,7 +287,7 @@ export type ResolversParentTypes = {
   List: ListModel;
   LoginInput: LoginInput;
   LoginOutput: Omit<LoginOutput, 'user'> & { user: ResolversParentTypes['User'] };
-  Movie: Movie;
+  Movie: MovieModel;
   Mutation: {};
   Query: {};
   SignupInput: SignupInput;
@@ -322,6 +324,7 @@ export type MovieResolvers<ContextType = any, ParentType extends ResolversParent
   directors?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   genres?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  imdbId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   poster?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   rating?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   stars?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;

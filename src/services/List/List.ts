@@ -69,10 +69,10 @@ class ListService {
       data: {
         movies: {
           connectOrCreate: {
-            where: { id: movie.id },
+            where: { tmdbId: movie.tmdbId },
             create: movie,
           },
-        }
+        },
       },
     });
     return true;
@@ -84,8 +84,8 @@ class ListService {
       where: { id: listId },
       data: {
         movies: {
-          disconnect: { id: movieId },
-        }
+          disconnect: { tmdbId: movieId },
+        },
       },
     });
     return true;
