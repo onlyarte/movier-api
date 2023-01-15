@@ -37,6 +37,16 @@ export type RawMovie = {
   vote_average: number;
 };
 
+export type RawCredits = {
+  cast: Array<{
+    name: string;
+  }>;
+  crew: Array<{
+    name: string;
+    department: 'Directing' | 'Writing' | 'Art' | 'Production';
+  }>;
+};
+
 export type ParsedMovie = {
   tmdbId: number;
   imdbId?: string;
