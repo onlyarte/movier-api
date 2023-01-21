@@ -2,7 +2,7 @@ type Query {
   user(id: String!): User
   list(id: String!): List
   movie(id: Int!): Movie!
-  search(query: String!): [Movie!]!
+  search(input: String!): [Movie!]!
 }
 
 type Mutation {

@@ -22,7 +22,7 @@ export const resolvers: ResolversWithContext = {
       return context.services.tmdb.get(args.id);
     },
     search: (parent, args, context, info) => {
-      return context.services.tmdb.search(args.query);
+      return context.services.tmdb.search(args.input);
     },
   },
   Mutation: {

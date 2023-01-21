@@ -1,6 +1,7 @@
 import 'graphql-import-node';
 import fastify from 'fastify';
 import multipart from 'fastify-multipart';
+import cors from '@fastify/cors';
 
 import {
   getGraphQLParameters,
@@ -18,6 +19,10 @@ async function main() {
   const server = fastify();
 
   server.register(multipart);
+  await server.register(cors, {
+    origin: '*',
+  });
+
   const storageService = new StorageService();
 
   server.route({
@@ -62,6 +67,8 @@ async function main() {
         query,
         variables,
       });
+
+      reply.raw.setHeader('Access-Control-Allow-Origin', '*');
 
       sendResult(result, reply.raw);
     },

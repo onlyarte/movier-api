@@ -31,6 +31,7 @@
     "ts-node-dev": "^1.1.8"
   },
   "dependencies": {
+    "@fastify/cors": "^7.0.0",
     "@google-cloud/storage": "^6.8.0",
     "@graphql-codegen/cli": "^2.4.0",
     "@graphql-tools/schema": "^8.3.1",
