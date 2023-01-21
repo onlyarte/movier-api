@@ -85,4 +85,5 @@ type Movie {
   writers: [String!]
   stars: [String!]
   rating: Float!
+  trailerUrl: String
 }

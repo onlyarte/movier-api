@@ -10,7 +10,6 @@ import config from './config';
 const prisma = new PrismaClient();
 
 const tmdbService = new TMDBService(config.tmdbApiKey);
-tmdbService.init().catch((e) => console.log(e));
 
 const userService = new UserService(prisma);
 const listService = new ListService(prisma);

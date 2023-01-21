@@ -35,6 +35,7 @@ export type RawMovie = {
     name: string;
   }>;
   vote_average: number;
+  video?: boolean;
 };
 
 export type RawCredits = {
@@ -45,6 +46,15 @@ export type RawCredits = {
     name: string;
     department: 'Directing' | 'Writing' | 'Art' | 'Production';
   }>;
+};
+
+export type RawVideos = {
+  results: {
+    type: string;
+    site: string;
+    key: string;
+    official: boolean;
+  }[];
 };
 
 export type ParsedMovie = {
@@ -60,4 +70,5 @@ export type ParsedMovie = {
   writers?: string[];
   stars?: string[];
   rating: number;
+  trailerUrl?: string;
 };

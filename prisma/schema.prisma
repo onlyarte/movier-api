@@ -62,6 +62,7 @@ model Movie {
   writers     String[]
   stars       String[]
   rating      Float
+  trailerUrl  String?
 
   listIds String[] @db.ObjectId
   lists   List[]   @relation(fields: [listIds], references: [id], "ListContainsMovie")
