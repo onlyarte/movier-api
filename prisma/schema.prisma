@@ -55,13 +55,13 @@ model Movie {
   title       String
   description String?
   poster      String?
-  year        Int
+  year        Int?
   countries   String[]
   genres      String[]
   directors   String[]
   writers     String[]
   stars       String[]
-  rating      Float
+  rating      Float?
   trailerUrl  String?
 
   listIds String[] @db.ObjectId

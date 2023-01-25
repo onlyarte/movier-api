@@ -63,12 +63,12 @@ export type ParsedMovie = {
   title: string;
   description?: string;
   poster?: string;
-  year: number;
+  year?: number;
   countries: string[];
   genres: string[];
-  directors?: string[];
-  writers?: string[];
-  stars?: string[];
-  rating: number;
+  directors: string[];
+  writers: string[];
+  stars: string[];
+  rating?: number;
   trailerUrl?: string;
 };

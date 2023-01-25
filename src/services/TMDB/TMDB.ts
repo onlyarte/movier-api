@@ -56,7 +56,9 @@ class TheMovieDBService {
       title: rawMovie.title,
       description: rawMovie.overview,
       poster: this.parsePoster(rawMovie.poster_path),
-      year: parseInt(rawMovie.release_date.split('-')?.[0]),
+      year: rawMovie.release_date
+        ? parseInt(rawMovie.release_date.split('-')?.[0])
+        : undefined,
       countries: rawMovie.production_countries.map((one) => one.name),
       genres: rawMovie.genres.map((one) => one.name),
       rating: Math.round(rawMovie.vote_average),

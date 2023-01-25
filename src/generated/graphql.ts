@@ -51,17 +51,17 @@ export type Movie = {
   __typename?: 'Movie';
   countries: Array<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  directors?: Maybe<Array<Scalars['String']>>;
+  directors: Array<Scalars['String']>;
   genres: Array<Scalars['String']>;
   id: Scalars['Int'];
   imdbId?: Maybe<Scalars['String']>;
   poster?: Maybe<Scalars['String']>;
-  rating: Scalars['Float'];
-  stars?: Maybe<Array<Scalars['String']>>;
+  rating?: Maybe<Scalars['Float']>;
+  stars: Array<Scalars['String']>;
   title: Scalars['String'];
   trailerUrl?: Maybe<Scalars['String']>;
-  writers?: Maybe<Array<Scalars['String']>>;
-  year: Scalars['Int'];
+  writers: Array<Scalars['String']>;
+  year?: Maybe<Scalars['Int']>;
 };
 
 export type Mutation = {
@@ -322,17 +322,17 @@ export type LoginOutputResolvers<ContextType = any, ParentType extends Resolvers
 export type MovieResolvers<ContextType = any, ParentType extends ResolversParentTypes['Movie'] = ResolversParentTypes['Movie']> = {
   countries?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  directors?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  directors?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   genres?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imdbId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   poster?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  rating?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  stars?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  stars?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trailerUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  writers?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
-  year?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  writers?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
