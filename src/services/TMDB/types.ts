@@ -57,6 +57,34 @@ export type RawVideos = {
   }[];
 };
 
+export type RawProvider = {
+  provider_id: number;
+  provider_name: string;
+  logo_path: string;
+};
+
+export type RawProviders = {
+  id: number;
+  results: Record<string, {
+    flatrate: RawProvider[];
+    rent: RawProvider[];
+    buy: RawProvider[];
+  }>[];
+};
+
+export type ParsedProvider = {
+  id: number;
+  providerName: string;
+  providerLogoUrl: string;
+};
+
+export type ParsedProviders = {
+  id: number;
+  flatrate: ParsedProvider[];
+  rent: ParsedProvider[];
+  buy: ParsedProvider[];
+};
+
 export type ParsedMovie = {
   tmdbId: number;
   imdbId?: string;

@@ -1,6 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { User as UserModel, List as ListModel } from '@prisma/client';
-import { ParsedMovie as MovieModel } from 'src/services/TMDB/types';
+import { ParsedMovie as MovieModel, ParsedProviders as ProvidersModel } from 'src/services/TMDB/types';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -56,12 +56,18 @@ export type Movie = {
   id: Scalars['Int'];
   imdbId?: Maybe<Scalars['String']>;
   poster?: Maybe<Scalars['String']>;
+  providers?: Maybe<Providers>;
   rating?: Maybe<Scalars['Float']>;
   stars: Array<Scalars['String']>;
   title: Scalars['String'];
   trailerUrl?: Maybe<Scalars['String']>;
   writers: Array<Scalars['String']>;
   year?: Maybe<Scalars['Int']>;
+};
+
+
+export type MovieProvidersArgs = {
+  region: Scalars['String'];
 };
 
 export type Mutation = {
@@ -135,6 +141,21 @@ export type MutationUnsaveListArgs = {
 export type MutationUpdateListArgs = {
   id: Scalars['String'];
   input: UpdateListInput;
+};
+
+export type Provider = {
+  __typename?: 'Provider';
+  id: Scalars['Int'];
+  providerLogoUrl: Scalars['String'];
+  providerName: Scalars['String'];
+};
+
+export type Providers = {
+  __typename?: 'Providers';
+  buy?: Maybe<Array<Provider>>;
+  flatrate?: Maybe<Array<Provider>>;
+  id: Scalars['Int'];
+  rent?: Maybe<Array<Provider>>;
 };
 
 export type Query = {
@@ -270,6 +291,8 @@ export type ResolversTypes = {
   LoginOutput: ResolverTypeWrapper<Omit<LoginOutput, 'user'> & { user: ResolversTypes['User'] }>;
   Movie: ResolverTypeWrapper<MovieModel>;
   Mutation: ResolverTypeWrapper<{}>;
+  Provider: ResolverTypeWrapper<Provider>;
+  Providers: ResolverTypeWrapper<ProvidersModel>;
   Query: ResolverTypeWrapper<{}>;
   SignupInput: SignupInput;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -290,6 +313,8 @@ export type ResolversParentTypes = {
   LoginOutput: Omit<LoginOutput, 'user'> & { user: ResolversParentTypes['User'] };
   Movie: MovieModel;
   Mutation: {};
+  Provider: Provider;
+  Providers: ProvidersModel;
   Query: {};
   SignupInput: SignupInput;
   String: Scalars['String'];
@@ -327,6 +352,7 @@ export type MovieResolvers<ContextType = any, ParentType extends ResolversParent
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imdbId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   poster?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  providers?: Resolver<Maybe<ResolversTypes['Providers']>, ParentType, ContextType, RequireFields<MovieProvidersArgs, 'region'>>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   stars?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -348,6 +374,21 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   unfollowUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnfollowUserArgs, 'id'>>;
   unsaveList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnsaveListArgs, 'id'>>;
   updateList?: Resolver<ResolversTypes['List'], ParentType, ContextType, RequireFields<MutationUpdateListArgs, 'id' | 'input'>>;
+};
+
+export type ProviderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Provider'] = ResolversParentTypes['Provider']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  providerLogoUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  providerName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ProvidersResolvers<ContextType = any, ParentType extends ResolversParentTypes['Providers'] = ResolversParentTypes['Providers']> = {
+  buy?: Resolver<Maybe<Array<ResolversTypes['Provider']>>, ParentType, ContextType>;
+  flatrate?: Resolver<Maybe<Array<ResolversTypes['Provider']>>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  rent?: Resolver<Maybe<Array<ResolversTypes['Provider']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -375,6 +416,8 @@ export type Resolvers<ContextType = any> = {
   LoginOutput?: LoginOutputResolvers<ContextType>;
   Movie?: MovieResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Provider?: ProviderResolvers<ContextType>;
+  Providers?: ProvidersResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };

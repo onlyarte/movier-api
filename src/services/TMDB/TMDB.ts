@@ -5,6 +5,8 @@ import {
   ParsedMovie,
   RawCredits,
   RawMovie,
+  RawProvider,
+  RawProviders,
   RawSearch,
   RawVideos,
 } from './types';
@@ -90,6 +92,32 @@ class TheMovieDBService {
     const videos = videosResponse.data as RawVideos;
 
     return this.parse(rawMovie, credits, videos);
+  }
+
+  private parseProvider(provider: RawProvider) {
+    const { base_url } = this.configuration!.images;
+    return {
+      id: provider.provider_id,
+      providerName: provider.provider_name,
+      providerLogoUrl: base_url + provider.logo_path,
+    };
+  }
+
+  async getProviders(id: number, region: string) {
+    const response = await this.api.get(
+      `/movie/${id}/watch/providers?language=en-US&api_key=${this.apiKey}`
+    );
+    const providers = response.data as RawProviders;
+    if (!providers.results[region]) return null;
+
+    const { flatrate, rent, buy } = providers.results[region];
+
+    return {
+      id: providers.id,
+      flatrate: flatrate?.map((entry: RawProvider) => this.parseProvider(entry)),
+      rent: rent?.map((entry: RawProvider) => this.parseProvider(entry)),
+      buy: buy?.map((entry: RawProvider) => this.parseProvider(entry)),
+    };
   }
 
   async search(query: string) {

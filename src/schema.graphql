@@ -72,6 +72,19 @@ input UpdateListInput {
   cover: String
 }
 
+type Provider {
+  id: Int!
+  providerName: String!
+  providerLogoUrl: String!
+}
+
+type Providers {
+  id: Int!
+  flatrate: [Provider!]
+  rent: [Provider!]
+  buy: [Provider!]
+}
+
 type Movie {
   id: Int!
   imdbId: String
@@ -86,4 +99,5 @@ type Movie {
   stars: [String!]!
   rating: Float
   trailerUrl: String
+  providers(region: String!): Providers
 }

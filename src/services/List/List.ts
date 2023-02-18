@@ -11,7 +11,10 @@ class ListService {
   }
 
   async get(listId: string) {
-    return await this.prisma.list.findUnique({ where: { id: listId } });
+    return await this.prisma.list.findUnique({
+      where: { id: listId },
+      include: { movies: true },
+    });
   }
 
   async create(input: CreateListInput, currentUserId: string) {

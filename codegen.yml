@@ -11,3 +11,4 @@ generates:
         User: '@prisma/client#User as UserModel'
         List: '@prisma/client#List as ListModel'
         Movie: 'src/services/TMDB/types#ParsedMovie as MovieModel'
+        Providers: 'src/services/TMDB/types#ParsedProviders as ProvidersModel'

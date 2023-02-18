@@ -84,6 +84,9 @@ export const resolvers: ResolversWithContext = {
     id: (parent) => {
       return parent.tmdbId;
     },
+    providers: (parent, args, context, info) => {
+      return context.services.tmdb.getProviders(parent.tmdbId, args.region);
+    },
   },
   List: makeObjectResolvers('list', ['owner', 'movies']),
   User: makeObjectResolvers('user', [

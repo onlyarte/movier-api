@@ -35,7 +35,7 @@ async function authenticateUser(
   request: FastifyRequest
 ): Promise<User | null> {
   if (request.headers.authorization) {
-    const token = request.headers.authorization.split(' ')[1];
+    const token = request.headers.authorization.replace('Bearer ', '');
     const tokenPayload = verify(token);
     const userId = tokenPayload.userId;
 
