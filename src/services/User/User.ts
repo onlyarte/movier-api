@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { LoginInput, SignupInput } from '../../generated/graphql';
 import { decrypt, encrypt } from '../../utils/crypto';
-import { sign } from '../../utils/jwt';
+import { EXPIRES_IN_SECONDS, sign } from '../../utils/jwt';
 
 class UserService {
   prisma: PrismaClient;
@@ -23,8 +23,9 @@ class UserService {
         password: encrypt(input.password),
       },
     });
-    const token = sign({ userId: user.id });
-    return { user, token };
+
+    const { token, expiresAt } = sign({ userId: user.id });
+    return { user, token, expiresAt };
   }
 
   async login(input: LoginInput) {
@@ -38,8 +39,8 @@ class UserService {
       throw new Error('The password is wrong');
     }
 
-    const token = sign({ userId: user.id });
-    return { user, token };
+    const { token, expiresAt } = sign({ userId: user.id });
+    return { user, token, expiresAt };
   }
 
   async follow(currentUserId: string, followingId: string) {

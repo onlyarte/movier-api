@@ -43,6 +43,7 @@ export type LoginInput = {
 
 export type LoginOutput = {
   __typename?: 'LoginOutput';
+  expiresAt: Scalars['Date'];
   token: Scalars['String'];
   user: User;
 };
@@ -190,7 +191,7 @@ export type SignupInput = {
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
-  photoUrl: Scalars['String'];
+  photoUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateListInput = {
@@ -339,6 +340,7 @@ export type ListResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type LoginOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginOutput'] = ResolversParentTypes['LoginOutput']> = {
+  expiresAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

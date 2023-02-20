@@ -27,7 +27,7 @@ async function main() {
 
   server.route({
     method: 'POST',
-    url: '/files',
+    url: '/file',
     handler: async (request, reply) => {
       const file = await request.file({ limits: { fileSize: 1000000 } });
       try {
@@ -35,7 +35,7 @@ async function main() {
         reply.send(url);
       } catch (error) {
         console.log(error);
-        reply.send(500);
+        reply.code(500).send();
       }
     },
   });

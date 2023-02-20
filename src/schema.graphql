@@ -36,7 +36,7 @@ input SignupInput {
   email: String!
   password: String!
   name: String!
-  photoUrl: String!
+  photoUrl: String
 }
 
 input LoginInput {
@@ -47,6 +47,7 @@ input LoginInput {
 type LoginOutput {
   user: User!
   token: String!
+  expiresAt: Date!
 }
 
 type List {

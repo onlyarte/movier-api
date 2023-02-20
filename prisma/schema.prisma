@@ -15,7 +15,7 @@ model User {
   email     String   @unique
   password  String
   name      String
-  photoUrl  String
+  photoUrl  String?
   createdAt DateTime @default(now())
 
   followingIds String[] @db.ObjectId

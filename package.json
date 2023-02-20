@@ -9,7 +9,8 @@
     "build": "tsc && npm run copy-schema",
     "deploy": "npm run build && gcloud app deploy",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "codegen": "graphql-codegen --config codegen.yml",
+    "generate:prisma": "npm prisma generate",
+    "generate:types": "graphql-codegen --config codegen.yml",
     "copy-schema": "cp src/*.graphql build"
   },
   "repository": {
@@ -44,6 +45,7 @@
     "graphql": "^16.2.0",
     "graphql-helix": "^1.13.0",
     "graphql-import-node": "0.0.4",
+    "graphql-scalars": "^1.20.1",
     "jsonwebtoken": "^8.5.1",
     "prisma": "^3.15.2",
     "ts-node": "^10.9.1",

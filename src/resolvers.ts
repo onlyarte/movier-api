@@ -1,8 +1,8 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { DateTimeResolver } from 'graphql-scalars';
 import { Resolvers } from './generated/graphql';
 import { GraphQLContext } from './context';
 import { makeObjectResolvers } from './utils/generators';
-import scalars from './utils/scalars';
 import { assertCurrentUser } from './utils/validators';
 
 /// <reference path="../node_modules/graphql-import-node/register.d.ts" />
@@ -11,6 +11,7 @@ import typeDefs from './schema.graphql';
 type ResolversWithContext = Resolvers<GraphQLContext>;
 
 export const resolvers: ResolversWithContext = {
+  Date: DateTimeResolver,
   Query: {
     user: (parent, args, context, info) => {
       return context.services.user.get(args.id);
@@ -95,10 +96,9 @@ export const resolvers: ResolversWithContext = {
     'lists',
     'savedLists',
   ]),
-  ...scalars,
 };
 
 export const schema = makeExecutableSchema({
-  typeDefs,
+  typeDefs: typeDefs,
   resolvers,
 });
