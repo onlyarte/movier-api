@@ -17,6 +17,7 @@ type Mutation {
   unsaveList(id: String!): Boolean!
   pushMovie(listId: String!, movieId: Int!): Boolean!
   pullMovie(listId: String!, movieId: Int!): Boolean!
+  importMoviesFromImdb(listId: String!, imdbIds: [String!]!): Boolean!
 }
 
 scalar Date

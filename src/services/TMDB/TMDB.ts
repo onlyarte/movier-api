@@ -114,7 +114,9 @@ class TheMovieDBService {
 
     return {
       id: providers.id,
-      flatrate: flatrate?.map((entry: RawProvider) => this.parseProvider(entry)),
+      flatrate: flatrate?.map((entry: RawProvider) =>
+        this.parseProvider(entry)
+      ),
       rent: rent?.map((entry: RawProvider) => this.parseProvider(entry)),
       buy: buy?.map((entry: RawProvider) => this.parseProvider(entry)),
     };
@@ -127,6 +129,20 @@ class TheMovieDBService {
     );
     const { results } = response.data as RawSearch;
     return Promise.all(results.map((one) => this.get(one.id)));
+  }
+
+  async findByExternalId(id: string, source = 'imdb_id') {
+    const response = await this.api.get(
+      `/find/${id}?external_source=${source}&language=en-US&api_key=${this.apiKey}`
+    );
+    const { movie_results: results } = response.data as {
+      movie_results: { id: number }[];
+    };
+
+    if (results.length) {
+      return this.get(results[0].id);
+    }
+    return null;
   }
 }
 

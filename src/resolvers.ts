@@ -80,6 +80,20 @@ export const resolvers: ResolversWithContext = {
         currentUser.id
       );
     },
+    importMoviesFromImdb: async (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      for (const imdbId of args.imdbIds) {
+        const movie = await context.services.tmdb.findByExternalId(imdbId);
+        if (movie) {
+          await context.services.list.pushMovie(
+            args.listId,
+            movie,
+            currentUser.id
+          );
+        }
+      }
+      return true;
+    },
   },
   Movie: {
     id: (parent) => {

@@ -76,6 +76,7 @@ export type Mutation = {
   createList: List;
   deleteList: Scalars['Boolean'];
   followUser: Scalars['Boolean'];
+  importMoviesFromImdb: Scalars['Boolean'];
   login: LoginOutput;
   pullMovie: Scalars['Boolean'];
   pushMovie: Scalars['Boolean'];
@@ -99,6 +100,12 @@ export type MutationDeleteListArgs = {
 
 export type MutationFollowUserArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationImportMoviesFromImdbArgs = {
+  imdbIds: Array<Scalars['String']>;
+  listId: Scalars['String'];
 };
 
 
@@ -368,6 +375,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createList?: Resolver<ResolversTypes['List'], ParentType, ContextType, RequireFields<MutationCreateListArgs, 'input'>>;
   deleteList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteListArgs, 'id'>>;
   followUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationFollowUserArgs, 'id'>>;
+  importMoviesFromImdb?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationImportMoviesFromImdbArgs, 'imdbIds' | 'listId'>>;
   login?: Resolver<ResolversTypes['LoginOutput'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
   pullMovie?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationPullMovieArgs, 'listId' | 'movieId'>>;
   pushMovie?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationPushMovieArgs, 'listId' | 'movieId'>>;
