@@ -99,7 +99,7 @@ class TheMovieDBService {
     return {
       id: provider.provider_id,
       providerName: provider.provider_name,
-      providerLogoUrl: base_url + provider.logo_path,
+      providerLogoUrl: base_url + 'w300' + provider.logo_path,
     };
   }
 
