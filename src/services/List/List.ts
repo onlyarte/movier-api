@@ -11,10 +11,12 @@ class ListService {
   }
 
   async get(listId: string) {
-    return await this.prisma.list.findUnique({
+    const list = await this.prisma.list.findUnique({
       where: { id: listId },
       include: { movies: true },
     });
+    if (!list) return null;
+    return { ...list, movies: list.movies.reverse() };
   }
 
   async create(input: CreateListInput, currentUserId: string) {
