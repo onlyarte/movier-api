@@ -16,7 +16,9 @@ import StorageService from './services/Storage';
 import config from './config';
 
 async function main() {
-  const server = fastify();
+  const server = fastify({
+    logger: true,
+  });
 
   server.register(multipart);
   await server.register(cors, {

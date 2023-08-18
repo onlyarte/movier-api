@@ -9,7 +9,7 @@
     "build": "tsc && npm run copy-schema",
     "deploy": "npm run build && gcloud app deploy",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "generate:prisma": "npm prisma generate",
+    "generate:prisma": "npx prisma generate",
     "generate:types": "graphql-codegen --config codegen.yml",
     "copy-schema": "cp src/*.graphql build"
   },

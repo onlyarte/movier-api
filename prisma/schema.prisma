@@ -12,8 +12,8 @@ datasource db {
 
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  sub       String   @unique
   email     String   @unique
-  password  String
   name      String
   photoUrl  String?
   createdAt DateTime @default(now())

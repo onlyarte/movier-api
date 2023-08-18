@@ -6,7 +6,6 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -34,18 +33,6 @@ export type List = {
   owner: User;
   title: Scalars['String'];
   updatedAt: Scalars['Date'];
-};
-
-export type LoginInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type LoginOutput = {
-  __typename?: 'LoginOutput';
-  expiresAt: Scalars['Date'];
-  token: Scalars['String'];
-  user: User;
 };
 
 export type Movie = {
@@ -77,11 +64,9 @@ export type Mutation = {
   deleteList: Scalars['Boolean'];
   followUser: Scalars['Boolean'];
   importMoviesFromImdb: Scalars['Boolean'];
-  login: LoginOutput;
   pullMovie: Scalars['Boolean'];
   pushMovie: Scalars['Boolean'];
   saveList: Scalars['Boolean'];
-  signup: LoginOutput;
   unfollowUser: Scalars['Boolean'];
   unsaveList: Scalars['Boolean'];
   updateList: List;
@@ -109,11 +94,6 @@ export type MutationImportMoviesFromImdbArgs = {
 };
 
 
-export type MutationLoginArgs = {
-  input: LoginInput;
-};
-
-
 export type MutationPullMovieArgs = {
   listId: Scalars['String'];
   movieId: Scalars['Int'];
@@ -128,11 +108,6 @@ export type MutationPushMovieArgs = {
 
 export type MutationSaveListArgs = {
   id: Scalars['String'];
-};
-
-
-export type MutationSignupArgs = {
-  input: SignupInput;
 };
 
 
@@ -192,13 +167,6 @@ export type QuerySearchArgs = {
 
 export type QueryUserArgs = {
   id: Scalars['String'];
-};
-
-export type SignupInput = {
-  email: Scalars['String'];
-  name: Scalars['String'];
-  password: Scalars['String'];
-  photoUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateListInput = {
@@ -295,14 +263,11 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   List: ResolverTypeWrapper<ListModel>;
-  LoginInput: LoginInput;
-  LoginOutput: ResolverTypeWrapper<Omit<LoginOutput, 'user'> & { user: ResolversTypes['User'] }>;
   Movie: ResolverTypeWrapper<MovieModel>;
   Mutation: ResolverTypeWrapper<{}>;
   Provider: ResolverTypeWrapper<Provider>;
   Providers: ResolverTypeWrapper<ProvidersModel>;
   Query: ResolverTypeWrapper<{}>;
-  SignupInput: SignupInput;
   String: ResolverTypeWrapper<Scalars['String']>;
   UpdateListInput: UpdateListInput;
   User: ResolverTypeWrapper<UserModel>;
@@ -317,14 +282,11 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   List: ListModel;
-  LoginInput: LoginInput;
-  LoginOutput: Omit<LoginOutput, 'user'> & { user: ResolversParentTypes['User'] };
   Movie: MovieModel;
   Mutation: {};
   Provider: Provider;
   Providers: ProvidersModel;
   Query: {};
-  SignupInput: SignupInput;
   String: Scalars['String'];
   UpdateListInput: UpdateListInput;
   User: UserModel;
@@ -343,13 +305,6 @@ export type ListResolvers<ContextType = any, ParentType extends ResolversParentT
   owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type LoginOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginOutput'] = ResolversParentTypes['LoginOutput']> = {
-  expiresAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -376,11 +331,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteListArgs, 'id'>>;
   followUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationFollowUserArgs, 'id'>>;
   importMoviesFromImdb?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationImportMoviesFromImdbArgs, 'imdbIds' | 'listId'>>;
-  login?: Resolver<ResolversTypes['LoginOutput'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
   pullMovie?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationPullMovieArgs, 'listId' | 'movieId'>>;
   pushMovie?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationPushMovieArgs, 'listId' | 'movieId'>>;
   saveList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveListArgs, 'id'>>;
-  signup?: Resolver<ResolversTypes['LoginOutput'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'input'>>;
   unfollowUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnfollowUserArgs, 'id'>>;
   unsaveList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnsaveListArgs, 'id'>>;
   updateList?: Resolver<ResolversTypes['List'], ParentType, ContextType, RequireFields<MutationUpdateListArgs, 'id' | 'input'>>;
@@ -423,7 +376,6 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 export type Resolvers<ContextType = any> = {
   Date?: GraphQLScalarType;
   List?: ListResolvers<ContextType>;
-  LoginOutput?: LoginOutputResolvers<ContextType>;
   Movie?: MovieResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Provider?: ProviderResolvers<ContextType>;

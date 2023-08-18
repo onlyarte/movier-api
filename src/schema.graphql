@@ -6,8 +6,6 @@ type Query {
 }
 
 type Mutation {
-  signup(input: SignupInput!): LoginOutput!
-  login(input: LoginInput!): LoginOutput!
   followUser(id: String!): Boolean!
   unfollowUser(id: String!): Boolean!
   createList(input: CreateListInput!): List!
@@ -31,24 +29,6 @@ type User {
   followers: [User!]!
   lists: [List!]!
   savedLists: [List!]!
-}
-
-input SignupInput {
-  email: String!
-  password: String!
-  name: String!
-  photoUrl: String
-}
-
-input LoginInput {
-  email: String!
-  password: String!
-}
-
-type LoginOutput {
-  user: User!
-  token: String!
-  expiresAt: Date!
 }
 
 type List {

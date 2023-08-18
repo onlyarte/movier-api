@@ -27,12 +27,6 @@ export const resolvers: ResolversWithContext = {
     },
   },
   Mutation: {
-    signup: (parent, args, context, info) => {
-      return context.services.user.signup(args.input);
-    },
-    login: (parent, args, context, info) => {
-      return context.services.user.login(args.input);
-    },
     followUser: async (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
       await context.services.user.follow(currentUser.id, args.id);

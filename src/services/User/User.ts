@@ -1,46 +1,45 @@
+import axios, { AxiosInstance } from 'axios';
 import { PrismaClient } from '@prisma/client';
-import { LoginInput, SignupInput } from '../../generated/graphql';
-import { decrypt, encrypt } from '../../utils/crypto';
-import { EXPIRES_IN_SECONDS, sign } from '../../utils/jwt';
+import { setupCache } from 'axios-cache-adapter';
 
 class UserService {
   prisma: PrismaClient;
+  private auth0: AxiosInstance;
 
-  constructor(prisma: PrismaClient) {
+  constructor(prisma: PrismaClient, auth0Domain: string) {
     this.prisma = prisma;
+
+    this.auth0 = axios.create({
+      baseURL: auth0Domain,
+      adapter: setupCache({}).adapter,
+    });
   }
 
   async get(id: string) {
-    return await this.prisma.user.findUnique({
-      where: { id },
+    return await this.prisma.user.findFirst({
+      where: id.length === 24 ? { OR: [{ id }, { sub: id }] } : { sub: id },
     });
   }
 
-  async signup(input: SignupInput) {
-    const user = await this.prisma.user.create({
+  async create({
+    sub,
+    email,
+    name,
+    picture,
+  }: {
+    sub: string;
+    email: string;
+    name: string;
+    picture: string;
+  }) {
+    return await this.prisma.user.create({
       data: {
-        ...input,
-        password: encrypt(input.password),
+        sub,
+        email,
+        name,
+        photoUrl: picture,
       },
     });
-
-    const { token, expiresAt } = sign({ userId: user.id });
-    return { user, token, expiresAt };
-  }
-
-  async login(input: LoginInput) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: input.email },
-    });
-    if (!user) {
-      throw new Error('Could not find the user');
-    }
-    if (input.password !== decrypt(user?.password)) {
-      throw new Error('The password is wrong');
-    }
-
-    const { token, expiresAt } = sign({ userId: user.id });
-    return { user, token, expiresAt };
   }
 
   async follow(currentUserId: string, followingId: string) {
@@ -61,6 +60,15 @@ class UserService {
       },
       include: { following: true },
     });
+  }
+
+  async authInfo(auth0Token: string) {
+    const { data } = await this.auth0.get('/userinfo', {
+      headers: {
+        Authorization: auth0Token,
+      },
+    });
+    return data;
   }
 }
 
