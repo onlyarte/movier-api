@@ -1,23 +1,18 @@
-import axios, { AxiosInstance } from 'axios';
 import { PrismaClient } from '@prisma/client';
-import { setupCache } from 'axios-cache-adapter';
+import { db } from './firebase';
 
 class UserService {
   prisma: PrismaClient;
-  private auth0: AxiosInstance;
 
   constructor(prisma: PrismaClient, auth0Domain: string) {
     this.prisma = prisma;
-
-    this.auth0 = axios.create({
-      baseURL: auth0Domain,
-      adapter: setupCache({}).adapter,
-    });
   }
 
   async get(id: string) {
     return await this.prisma.user.findFirst({
-      where: id.length === 24 ? { OR: [{ id }, { sub: id }] } : { sub: id },
+      where: {
+        OR: [...(id.length === 24 ? [{ id }] : []), { sub: id }, { email: id }],
+      },
     });
   }
 
@@ -62,13 +57,26 @@ class UserService {
     });
   }
 
-  async authInfo(auth0Token: string) {
-    const { data } = await this.auth0.get('/userinfo', {
-      headers: {
-        Authorization: auth0Token,
-      },
-    });
-    return data;
+  async authInfo(base64Token: string) {
+    const sessionToken = Buffer.from(base64Token, 'base64').toString('ascii');
+    const sessionSnapshot = await db
+      .collection('sessions')
+      .where('sessionToken', '==', sessionToken)
+      .get();
+    if (sessionSnapshot.empty) {
+      throw new Error('Session not found');
+    }
+    const session = sessionSnapshot.docs[0]?.data();
+
+    const userSnapshot = await db.collection('users').doc(session.userId).get();
+    const user = userSnapshot.data();
+    if (!user) throw new Error('User not found');
+    return {
+      sub: session.userId,
+      email: user.email,
+      name: user.name,
+      picture: user.image,
+    };
   }
 }
 

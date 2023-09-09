@@ -34,7 +34,7 @@ async function authenticateUser(request: FastifyRequest): Promise<User | null> {
     if (!request.headers.authorization) return null;
 
     const authInfo = await services.user.authInfo(
-      request.headers.authorization
+      request.headers.authorization.replace('Bearer ', '')
     );
     if (!authInfo) return null;
 
@@ -44,6 +44,7 @@ async function authenticateUser(request: FastifyRequest): Promise<User | null> {
     const newUser = await services.user.create(authInfo);
     return newUser;
   } catch (error) {
+    console.error(error);
     return null;
   }
 }

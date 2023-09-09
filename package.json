@@ -42,6 +42,7 @@
     "dotenv": "^10.0.0",
     "fastify": "^3.25.2",
     "fastify-multipart": "^5.3.1",
+    "firebase-admin": "^11.10.1",
     "graphql": "^16.2.0",
     "graphql-helix": "^1.13.0",
     "graphql-import-node": "0.0.4",
