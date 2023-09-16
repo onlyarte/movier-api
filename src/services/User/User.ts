@@ -4,7 +4,7 @@ import { db } from './firebase';
 class UserService {
   prisma: PrismaClient;
 
-  constructor(prisma: PrismaClient, auth0Domain: string) {
+  constructor(prisma: PrismaClient) {
     this.prisma = prisma;
   }
 

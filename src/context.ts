@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 
 const tmdbService = new TMDBService(config.tmdbApiKey);
 
-const userService = new UserService(prisma, config.auth0Domain);
+const userService = new UserService(prisma);
 const listService = new ListService(prisma);
 
 const services = {

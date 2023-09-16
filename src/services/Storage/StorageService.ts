@@ -1,5 +1,5 @@
 import { Storage } from '@google-cloud/storage';
-import { MultipartFile } from 'fastify-multipart';
+import { MultipartFile } from '@fastify/multipart';
 import crypto from 'crypto';
 import path from 'path';
 

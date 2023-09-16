@@ -1,6 +1,6 @@
 import 'graphql-import-node';
 import fastify from 'fastify';
-import multipart from 'fastify-multipart';
+import multipart from '@fastify/multipart';
 import cors from '@fastify/cors';
 
 import {
@@ -33,7 +33,7 @@ async function main() {
     handler: async (request, reply) => {
       const file = await request.file({ limits: { fileSize: 1000000 } });
       try {
-        const url = await storageService.upload(file);
+        const url = await storageService.upload(file!);
         reply.send(url);
       } catch (error) {
         console.log(error);
@@ -76,9 +76,14 @@ async function main() {
     },
   });
 
-  server.listen(config.port, '0.0.0.0', () => {
-    console.log(`Server is running on http://localhost:${config.port}/`);
-  });
+  server
+    .listen({
+      port: config.port,
+      host: '0.0.0.0',
+    })
+    .then(() => {
+      console.log(`Server is running on http://localhost:${config.port}/`);
+    });
 }
 
 main();

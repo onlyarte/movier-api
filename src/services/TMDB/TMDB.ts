@@ -1,5 +1,4 @@
 import axios, { AxiosInstance } from 'axios';
-import { setupCache } from 'axios-cache-adapter';
 import {
   Configuration,
   ParsedMovie,
@@ -24,7 +23,7 @@ class TheMovieDBService {
 
     this.api = axios.create({
       baseURL: BASE_URL,
-      adapter: setupCache({}).adapter,
+      // TODO: Consider using `axios-cache-interceptor` to cache requests
     });
 
     this.init().catch((e) => console.log(e));
@@ -108,8 +107,10 @@ class TheMovieDBService {
       `/movie/${id}/watch/providers?language=en-US&api_key=${this.apiKey}`
     );
     const providers = response.data as RawProviders;
+    // @ts-ignore
     if (!providers.results[region]) return null;
 
+    // @ts-ignore
     const { flatrate, rent, buy } = providers.results[region];
 
     return {
