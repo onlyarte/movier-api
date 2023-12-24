@@ -1,5 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { DateTimeResolver } from 'graphql-scalars';
+import { uniqBy } from 'lodash';
 import { Resolvers } from './generated/graphql';
 import { GraphQLContext } from './context';
 import { makeObjectResolvers } from './utils/generators';
@@ -22,8 +23,24 @@ export const resolvers: ResolversWithContext = {
     movie: (parent, args, context, info) => {
       return context.services.tmdb.get(args.id);
     },
-    search: (parent, args, context, info) => {
-      return context.services.tmdb.search(args.input);
+    search: async (parent, args, context, info) => {
+      const direct = await context.services.tmdb.search(args.input);
+      if (
+        direct.length > 5 ||
+        direct[0]?.title.toLowerCase() === args.input.toLowerCase()
+      ) {
+        return direct;
+      }
+      const ambiguous = await context.services.recommendationAI.search(
+        args.input
+      );
+      return uniqBy(
+        [
+          ...direct,
+          ...(await context.services.tmdb.findAllByTitleAndYear(ambiguous)),
+        ],
+        'tmdbId'
+      );
     },
   },
   Mutation: {
@@ -107,13 +124,8 @@ export const resolvers: ResolversWithContext = {
               where: { id: parent.id },
             }).movies)
         );
-      const searchResults = await Promise.all(
-        recommendations.map((one) =>
-          context.services.tmdb.search(one.title, one.year)
-        )
-      );
       // TODO: Save recommendations to DB to avoid making too many requests
-      return searchResults.map((one) => one[0]).filter(Boolean);
+      return context.services.tmdb.findAllByTitleAndYear(recommendations);
     },
   },
   User: makeObjectResolvers('user', [
