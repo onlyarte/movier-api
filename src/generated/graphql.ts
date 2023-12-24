@@ -31,6 +31,7 @@ export type List = {
   id: Scalars['ID'];
   movies: Array<Movie>;
   owner: User;
+  recommendations: Array<Movie>;
   title: Scalars['String'];
   updatedAt: Scalars['Date'];
 };
@@ -303,6 +304,7 @@ export type ListResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   movies?: Resolver<Array<ResolversTypes['Movie']>, ParentType, ContextType>;
   owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  recommendations?: Resolver<Array<ResolversTypes['Movie']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

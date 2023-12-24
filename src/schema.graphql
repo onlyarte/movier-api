@@ -39,6 +39,7 @@ type List {
   createdAt: Date!
   updatedAt: Date!
   movies: [Movie!]!
+  recommendations: [Movie!]!
   owner: User!
 }
 

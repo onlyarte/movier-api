@@ -4,6 +4,7 @@ import { PrismaClient, User } from '@prisma/client';
 import TMDBService from './services/TMDB';
 import UserService from './services/User';
 import ListService from './services/List';
+import RecommendationAIService from './services/RecommendationAI';
 import config from './config';
 
 const prisma = new PrismaClient();
@@ -12,11 +13,13 @@ const tmdbService = new TMDBService(config.tmdbApiKey);
 
 const userService = new UserService(prisma);
 const listService = new ListService(prisma);
+const recommendationAIService = new RecommendationAIService();
 
 const services = {
   tmdb: tmdbService,
   user: userService,
   list: listService,
+  recommendationAI: recommendationAIService,
 };
 
 export type GraphQLContext = {
@@ -25,6 +28,7 @@ export type GraphQLContext = {
     tmdb: TMDBService;
     user: UserService;
     list: ListService;
+    recommendationAI: RecommendationAIService;
   };
   currentUser: User | null;
 };

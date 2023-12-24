@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import { setupCache } from 'axios-cache-interceptor';
 import {
   Configuration,
   ParsedMovie,
@@ -21,10 +22,10 @@ class TheMovieDBService {
     this.apiKey = apiKey;
     this.configuration = null;
 
-    this.api = axios.create({
+    const axiosInstance = axios.create({
       baseURL: BASE_URL,
-      // TODO: Consider using `axios-cache-interceptor` to cache requests
     });
+    this.api = setupCache(axiosInstance);
 
     this.init().catch((e) => console.log(e));
   }
@@ -123,11 +124,13 @@ class TheMovieDBService {
     };
   }
 
-  async search(query: string) {
+  async search(query: string, year?: number) {
     const safeQuery = encodeURIComponent(query);
-    const response = await this.api.get(
-      `/search/movie?query=${safeQuery}&language=en-US&page=1&include_adult=true&api_key=${this.apiKey}`
-    );
+    let path = `/search/movie?query=${safeQuery}&language=en-US&page=1&include_adult=true&api_key=${this.apiKey}`;
+    if (year) {
+      path += `&primary_release_year=${year}`;
+    }
+    const response = await this.api.get(path);
     const { results } = response.data as RawSearch;
     return Promise.all(results.map((one) => this.get(one.id)));
   }

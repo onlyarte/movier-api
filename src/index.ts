@@ -79,7 +79,7 @@ async function main() {
   server
     .listen({
       port: config.port,
-      host: '0.0.0.0',
+      host: config.host,
     })
     .then(() => {
       console.log(`Server is running on http://localhost:${config.port}/`);

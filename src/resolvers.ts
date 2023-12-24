@@ -97,7 +97,25 @@ export const resolvers: ResolversWithContext = {
       return context.services.tmdb.getProviders(parent.tmdbId, args.region);
     },
   },
-  List: makeObjectResolvers('list', ['owner', 'movies']),
+  List: {
+    ...makeObjectResolvers('list', ['owner', 'movies']),
+    recommendations: async (parent, args, context, info) => {
+      const recommendations =
+        await context.services.recommendationAI.findSimilar(
+          (parent as any).movies ??
+            (await context.prisma.list.findUnique({
+              where: { id: parent.id },
+            }).movies)
+        );
+      const searchResults = await Promise.all(
+        recommendations.map((one) =>
+          context.services.tmdb.search(one.title, one.year)
+        )
+      );
+      // TODO: Save recommendations to DB to avoid making too many requests
+      return searchResults.map((one) => one[0]).filter(Boolean);
+    },
+  },
   User: makeObjectResolvers('user', [
     'followers',
     'following',
