@@ -3,8 +3,8 @@ import OpenAI from 'openai';
 import { AISearchResult } from './types';
 import { extractJSONArray } from './utils';
 
-const MAX_DEFAULT = 5;
-const MAX_TOKENS_DEFAULT = 300;
+const MAX_DEFAULT = 20;
+const MAX_TOKENS_DEFAULT = MAX_DEFAULT * 100;
 
 class RecommendationAIService {
   private openai: OpenAI;
