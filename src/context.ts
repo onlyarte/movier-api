@@ -8,12 +8,15 @@ import RecommendationAIService from './services/RecommendationAI';
 import config from './config';
 
 const prisma = new PrismaClient();
-
 const tmdbService = new TMDBService(config.tmdbApiKey);
-
 const userService = new UserService(prisma);
-const listService = new ListService(prisma);
 const recommendationAIService = new RecommendationAIService();
+
+const listService = new ListService(
+  prisma,
+  tmdbService,
+  recommendationAIService
+);
 
 const services = {
   tmdb: tmdbService,

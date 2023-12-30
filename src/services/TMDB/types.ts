@@ -65,11 +65,14 @@ export type RawProvider = {
 
 export type RawProviders = {
   id: number;
-  results: Record<string, {
-    flatrate: RawProvider[];
-    rent: RawProvider[];
-    buy: RawProvider[];
-  }>[];
+  results: Record<
+    string,
+    {
+      flatrate: RawProvider[];
+      rent: RawProvider[];
+      buy: RawProvider[];
+    }
+  >[];
 };
 
 export type ParsedProvider = {
@@ -87,16 +90,16 @@ export type ParsedProviders = {
 
 export type ParsedMovie = {
   tmdbId: number;
-  imdbId?: string;
+  imdbId?: string | null;
   title: string;
-  description?: string;
-  poster?: string;
-  year?: number;
+  description?: string | null;
+  poster?: string | null;
+  year?: number | null;
   countries: string[];
   genres: string[];
   directors: string[];
   writers: string[];
   stars: string[];
-  rating?: number;
-  trailerUrl?: string;
+  rating?: number | null;
+  trailerUrl?: string | null;
 };

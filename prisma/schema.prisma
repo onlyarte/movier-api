@@ -42,6 +42,9 @@ model List {
   movieIds String[] @db.ObjectId
   movies   Movie[]  @relation(fields: [movieIds], references: [id], "ListContainsMovie")
 
+  recommendationIds        String[]  @db.ObjectId
+  recommendations          Movie[]   @relation(fields: [recommendationIds], references: [id], "MovieIsRecommendedForList")
+
   ownerId String @db.ObjectId
   owner   User   @relation(name: "UserOwnsList", fields: [ownerId], references: [id])
 
@@ -67,4 +70,7 @@ model Movie {
 
   listIds String[] @db.ObjectId
   lists   List[]   @relation(fields: [listIds], references: [id], "ListContainsMovie")
+
+  recommendedForListIds String[] @db.ObjectId
+  recommendedForLists   List[]   @relation(fields: [recommendedForListIds], references: [id], "MovieIsRecommendedForList")
 }

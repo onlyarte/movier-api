@@ -2,12 +2,22 @@ import { PrismaClient } from '@prisma/client';
 import { CreateListInput, UpdateListInput } from '../../generated/graphql';
 import { ParsedMovie } from '../TMDB/types';
 import { assertListOwner } from './validators';
+import TheMovieDBService from '../TMDB';
+import RecommendationAIService from '../RecommendationAI';
 
 class ListService {
   prisma: PrismaClient;
+  tmdb: TheMovieDBService;
+  recommendationAI: RecommendationAIService;
 
-  constructor(prisma: PrismaClient) {
+  constructor(
+    prisma: PrismaClient,
+    tmdb: TheMovieDBService,
+    recommendationAI: RecommendationAIService
+  ) {
     this.prisma = prisma;
+    this.tmdb = tmdb;
+    this.recommendationAI = recommendationAI;
   }
 
   async get(listId: string) {
@@ -17,6 +27,32 @@ class ListService {
     });
     if (!list) return null;
     return { ...list, movies: list.movies.reverse() };
+  }
+
+  async getRecommendations(listId: string) {
+    const list = await this.prisma.list.findUnique({
+      where: { id: listId },
+      include: { movies: true, recommendations: true },
+    });
+    if (!list) return [];
+    if (list.recommendations?.length) {
+      return list.recommendations;
+    }
+    const recommendations = await this.tmdb.findByTitleAndYear(
+      await this.recommendationAI.findSimilar(list.movies)
+    );
+    await this.prisma.list.update({
+      where: { id: listId },
+      data: {
+        recommendations: {
+          connectOrCreate: recommendations.map((movie) => ({
+            where: { tmdbId: movie.tmdbId },
+            create: movie,
+          })),
+        },
+      },
+    });
+    return recommendations;
   }
 
   async create(input: CreateListInput, currentUserId: string) {
@@ -72,6 +108,7 @@ class ListService {
     await this.prisma.list.update({
       where: { id: listId },
       data: {
+        recommendations: { set: [] },
         movies: {
           connectOrCreate: {
             where: { tmdbId: movie.tmdbId },
@@ -88,6 +125,7 @@ class ListService {
     await this.prisma.list.update({
       where: { id: listId },
       data: {
+        recommendations: { set: [] },
         movies: {
           disconnect: { tmdbId: movieId },
         },

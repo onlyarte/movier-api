@@ -37,7 +37,7 @@ export const resolvers: ResolversWithContext = {
       return uniqBy(
         [
           ...direct,
-          ...(await context.services.tmdb.findAllByTitleAndYear(ambiguous)),
+          ...(await context.services.tmdb.findByTitleAndYear(ambiguous)),
         ],
         'tmdbId'
       );
@@ -117,15 +117,7 @@ export const resolvers: ResolversWithContext = {
   List: {
     ...makeObjectResolvers('list', ['owner', 'movies']),
     recommendations: async (parent, args, context, info) => {
-      const recommendations =
-        await context.services.recommendationAI.findSimilar(
-          (parent as any).movies ??
-            (await context.prisma.list.findUnique({
-              where: { id: parent.id },
-            }).movies)
-        );
-      // TODO: Save recommendations to DB to avoid making too many requests
-      return context.services.tmdb.findAllByTitleAndYear(recommendations);
+      return context.services.list.getRecommendations(parent.id);
     },
   },
   User: makeObjectResolvers('user', [

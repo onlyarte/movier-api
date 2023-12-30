@@ -149,7 +149,7 @@ class TheMovieDBService {
     return null;
   }
 
-  async findAllByTitleAndYear(movies: { title: string; year: number }[]) {
+  async findByTitleAndYear(movies: { title: string; year: number }[]) {
     const results = await Promise.all(
       movies.map(({ title, year }) => this.search(title, year))
     );
