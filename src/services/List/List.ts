@@ -35,12 +35,23 @@ class ListService {
       include: { movies: true, recommendations: true },
     });
     if (!list) return [];
-    if (list.recommendations?.length) {
+
+    const weekAgo = new Date().valueOf() - 7 * 24 * 60 * 60 * 1000;
+    if (
+      list.recommendations?.length &&
+      list.recommendationsUpdatedAt &&
+      list.recommendationsUpdatedAt.valueOf() > weekAgo
+    ) {
       return list.recommendations;
     }
-    const recommendations = await this.tmdb.findByTitleAndYear(
-      await this.recommendationAI.findSimilar(list.movies)
+
+    const rawRecommendations = await this.recommendationAI.findSimilar(
+      list.movies
     );
+    const recommendations = await this.tmdb.findByTitleAndYear(
+      rawRecommendations
+    );
+
     await this.prisma.list.update({
       where: { id: listId },
       data: {
@@ -50,6 +61,7 @@ class ListService {
             create: movie,
           })),
         },
+        recommendationsUpdatedAt: new Date(),
       },
     });
     return recommendations;

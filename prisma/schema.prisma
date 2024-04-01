@@ -2,8 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "darwin-arm64"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -44,6 +43,7 @@ model List {
 
   recommendationIds        String[]  @db.ObjectId
   recommendations          Movie[]   @relation(fields: [recommendationIds], references: [id], "MovieIsRecommendedForList")
+  recommendationsUpdatedAt DateTime?
 
   ownerId String @db.ObjectId
   owner   User   @relation(name: "UserOwnsList", fields: [ownerId], references: [id])

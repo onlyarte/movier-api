@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev -r dotenv/config --exit-child src/index.ts",
     "start": "node ./build/index.js",
-    "build": "tsc && npm run copy-schema",
+    "build": "npm run generate:prisma && npm run generate:types && tsc && npm run copy-schema",
     "deploy": "npm run build && gcloud app deploy",
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate:prisma": "npx prisma generate",
