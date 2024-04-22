@@ -34,7 +34,7 @@ class ListService {
       where: { id: listId },
       include: { movies: true, recommendations: true },
     });
-    if (!list) return [];
+    if (!list || list.movies.length < 5) return [];
 
     const weekAgo = new Date().valueOf() - 7 * 24 * 60 * 60 * 1000;
     if (
