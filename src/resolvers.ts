@@ -77,7 +77,7 @@ export const resolvers: ResolversWithContext = {
     pushMovie: async (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
       const movie = await context.services.tmdb.get(args.movieId);
-      return await context.services.list.pushMovie(
+      return context.services.list.pushMovie(
         args.listId,
         movie,
         currentUser.id
@@ -105,10 +105,23 @@ export const resolvers: ResolversWithContext = {
       }
       return true;
     },
+    addNoteToMovie: async (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      const movie = await context.services.tmdb.get(args.movieId);
+      return context.services.note.create(args.content, movie, currentUser.id);
+    },
+    deleteNoteFromMovie: async (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      await context.services.note.delete(args.noteId, currentUser.id);
+      return true;
+    },
   },
   Movie: {
     id: (parent) => {
       return parent.tmdbId;
+    },
+    notes: (parent, args, context, info) => {
+      return context.services.note.findByMovieId(parent.tmdbId);
     },
     providers: (parent, args, context, info) => {
       return context.services.tmdb.getProviders(parent.tmdbId, args.region);
@@ -126,6 +139,7 @@ export const resolvers: ResolversWithContext = {
     'lists',
     'savedLists',
   ]),
+  Note: makeObjectResolvers('note', ['user', 'movie']),
 };
 
 export const schema = makeExecutableSchema({

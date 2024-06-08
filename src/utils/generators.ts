@@ -1,3 +1,5 @@
+import { GraphQLContext } from '../context';
+
 export const makeObjectResolvers = (model: string, fields: string[]) => {
   return fields.reduce((resolvers, field) => {
     resolvers[field] = async (

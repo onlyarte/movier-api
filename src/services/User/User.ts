@@ -9,7 +9,7 @@ class UserService {
   }
 
   async get(id: string) {
-    return await this.prisma.user.findFirst({
+    return this.prisma.user.findFirst({
       where: {
         OR: [...(id.length === 24 ? [{ id }] : []), { sub: id }, { email: id }],
       },
@@ -27,7 +27,7 @@ class UserService {
     name: string;
     picture: string;
   }) {
-    return await this.prisma.user.create({
+    return this.prisma.user.create({
       data: {
         sub,
         email,
@@ -38,7 +38,7 @@ class UserService {
   }
 
   async follow(currentUserId: string, followingId: string) {
-    return await this.prisma.user.update({
+    return this.prisma.user.update({
       where: { id: currentUserId },
       data: {
         following: { connect: { id: followingId } },
@@ -48,7 +48,7 @@ class UserService {
   }
 
   async unfollow(currentUserId: string, followingId: string) {
-    return await this.prisma.user.update({
+    return this.prisma.user.update({
       where: { id: currentUserId },
       data: {
         following: { disconnect: { id: followingId } },

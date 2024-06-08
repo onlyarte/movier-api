@@ -16,6 +16,8 @@ type Mutation {
   pushMovie(listId: String!, movieId: Int!): Boolean!
   pullMovie(listId: String!, movieId: Int!): Boolean!
   importMoviesFromImdb(listId: String!, imdbIds: [String!]!): Boolean!
+  addNoteToMovie(movieId: Int!, content: String!): Note!
+  deleteNoteFromMovie(noteId: String!): Boolean!
 }
 
 scalar Date
@@ -75,12 +77,21 @@ type Movie {
   description: String
   poster: String
   year: Int
-  countries: [String!]!
-  genres: [String!]!
-  directors: [String!]!
-  writers: [String!]!
-  stars: [String!]!
+  countries: [String!]
+  genres: [String!]
+  directors: [String!]
+  writers: [String!]
+  stars: [String!]
   rating: Float
   trailerUrl: String
   providers(region: String!): Providers
+  notes: [Note!]!
+}
+
+type Note {
+  id: ID!
+  content: String!
+  createdAt: Date!
+  user: User
+  movie: Movie
 }

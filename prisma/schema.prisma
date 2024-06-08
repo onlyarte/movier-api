@@ -28,6 +28,8 @@ model User {
 
   savedListIds String[] @db.ObjectId
   savedLists   List[]   @relation(fields: [savedListIds], references: [id], "UserSavesList")
+
+  notes Note[]
 }
 
 model List {
@@ -73,4 +75,18 @@ model Movie {
 
   recommendedForListIds String[] @db.ObjectId
   recommendedForLists   List[]   @relation(fields: [recommendedForListIds], references: [id], "MovieIsRecommendedForList")
+
+  notes Note[]
+}
+
+model Note {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  movieId String @db.ObjectId
+  movie   Movie  @relation(fields: [movieId], references: [id])
 }

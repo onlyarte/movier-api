@@ -68,7 +68,7 @@ class ListService {
   }
 
   async create(input: CreateListInput, currentUserId: string) {
-    return await this.prisma.list.create({
+    return this.prisma.list.create({
       data: {
         ...input,
         owner: { connect: { id: currentUserId } },
@@ -79,7 +79,7 @@ class ListService {
 
   async update(listId: string, input: UpdateListInput, currentUserId: string) {
     assertListOwner(await this.get(listId), currentUserId);
-    return await this.prisma.list.update({
+    return this.prisma.list.update({
       where: { id: listId },
       data: {
         title: input.title || undefined,

@@ -6,6 +6,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -38,19 +39,20 @@ export type List = {
 
 export type Movie = {
   __typename?: 'Movie';
-  countries: Array<Scalars['String']>;
+  countries?: Maybe<Array<Scalars['String']>>;
   description?: Maybe<Scalars['String']>;
-  directors: Array<Scalars['String']>;
-  genres: Array<Scalars['String']>;
+  directors?: Maybe<Array<Scalars['String']>>;
+  genres?: Maybe<Array<Scalars['String']>>;
   id: Scalars['Int'];
   imdbId?: Maybe<Scalars['String']>;
+  notes: Array<Note>;
   poster?: Maybe<Scalars['String']>;
   providers?: Maybe<Providers>;
   rating?: Maybe<Scalars['Float']>;
-  stars: Array<Scalars['String']>;
+  stars?: Maybe<Array<Scalars['String']>>;
   title: Scalars['String'];
   trailerUrl?: Maybe<Scalars['String']>;
-  writers: Array<Scalars['String']>;
+  writers?: Maybe<Array<Scalars['String']>>;
   year?: Maybe<Scalars['Int']>;
 };
 
@@ -61,8 +63,10 @@ export type MovieProvidersArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addNoteToMovie: Note;
   createList: List;
   deleteList: Scalars['Boolean'];
+  deleteNoteFromMovie: Scalars['Boolean'];
   followUser: Scalars['Boolean'];
   importMoviesFromImdb: Scalars['Boolean'];
   pullMovie: Scalars['Boolean'];
@@ -74,6 +78,12 @@ export type Mutation = {
 };
 
 
+export type MutationAddNoteToMovieArgs = {
+  content: Scalars['String'];
+  movieId: Scalars['Int'];
+};
+
+
 export type MutationCreateListArgs = {
   input: CreateListInput;
 };
@@ -81,6 +91,11 @@ export type MutationCreateListArgs = {
 
 export type MutationDeleteListArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationDeleteNoteFromMovieArgs = {
+  noteId: Scalars['String'];
 };
 
 
@@ -125,6 +140,15 @@ export type MutationUnsaveListArgs = {
 export type MutationUpdateListArgs = {
   id: Scalars['String'];
   input: UpdateListInput;
+};
+
+export type Note = {
+  __typename?: 'Note';
+  content: Scalars['String'];
+  createdAt: Scalars['Date'];
+  id: Scalars['ID'];
+  movie?: Maybe<Movie>;
+  user?: Maybe<User>;
 };
 
 export type Provider = {
@@ -266,6 +290,7 @@ export type ResolversTypes = {
   List: ResolverTypeWrapper<ListModel>;
   Movie: ResolverTypeWrapper<MovieModel>;
   Mutation: ResolverTypeWrapper<{}>;
+  Note: ResolverTypeWrapper<Omit<Note, 'movie' | 'user'> & { movie?: Maybe<ResolversTypes['Movie']>, user?: Maybe<ResolversTypes['User']> }>;
   Provider: ResolverTypeWrapper<Provider>;
   Providers: ResolverTypeWrapper<ProvidersModel>;
   Query: ResolverTypeWrapper<{}>;
@@ -285,6 +310,7 @@ export type ResolversParentTypes = {
   List: ListModel;
   Movie: MovieModel;
   Mutation: {};
+  Note: Omit<Note, 'movie' | 'user'> & { movie?: Maybe<ResolversParentTypes['Movie']>, user?: Maybe<ResolversParentTypes['User']> };
   Provider: Provider;
   Providers: ProvidersModel;
   Query: {};
@@ -311,26 +337,29 @@ export type ListResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type MovieResolvers<ContextType = any, ParentType extends ResolversParentTypes['Movie'] = ResolversParentTypes['Movie']> = {
-  countries?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  countries?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  directors?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  genres?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  directors?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  genres?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imdbId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  notes?: Resolver<Array<ResolversTypes['Note']>, ParentType, ContextType>;
   poster?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   providers?: Resolver<Maybe<ResolversTypes['Providers']>, ParentType, ContextType, RequireFields<MovieProvidersArgs, 'region'>>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  stars?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  stars?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trailerUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  writers?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  writers?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  addNoteToMovie?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationAddNoteToMovieArgs, 'content' | 'movieId'>>;
   createList?: Resolver<ResolversTypes['List'], ParentType, ContextType, RequireFields<MutationCreateListArgs, 'input'>>;
   deleteList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteListArgs, 'id'>>;
+  deleteNoteFromMovie?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteNoteFromMovieArgs, 'noteId'>>;
   followUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationFollowUserArgs, 'id'>>;
   importMoviesFromImdb?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationImportMoviesFromImdbArgs, 'imdbIds' | 'listId'>>;
   pullMovie?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationPullMovieArgs, 'listId' | 'movieId'>>;
@@ -339,6 +368,15 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   unfollowUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnfollowUserArgs, 'id'>>;
   unsaveList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnsaveListArgs, 'id'>>;
   updateList?: Resolver<ResolversTypes['List'], ParentType, ContextType, RequireFields<MutationUpdateListArgs, 'id' | 'input'>>;
+};
+
+export type NoteResolvers<ContextType = any, ParentType extends ResolversParentTypes['Note'] = ResolversParentTypes['Note']> = {
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  movie?: Resolver<Maybe<ResolversTypes['Movie']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ProviderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Provider'] = ResolversParentTypes['Provider']> = {
@@ -380,6 +418,7 @@ export type Resolvers<ContextType = any> = {
   List?: ListResolvers<ContextType>;
   Movie?: MovieResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Note?: NoteResolvers<ContextType>;
   Provider?: ProviderResolvers<ContextType>;
   Providers?: ProvidersResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
