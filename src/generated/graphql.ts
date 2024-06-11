@@ -45,7 +45,7 @@ export type Movie = {
   genres?: Maybe<Array<Scalars['String']>>;
   id: Scalars['Int'];
   imdbId?: Maybe<Scalars['String']>;
-  notes: Array<Note>;
+  notes?: Maybe<Array<Note>>;
   poster?: Maybe<Scalars['String']>;
   providers?: Maybe<Providers>;
   rating?: Maybe<Scalars['Float']>;
@@ -343,7 +343,7 @@ export type MovieResolvers<ContextType = any, ParentType extends ResolversParent
   genres?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imdbId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  notes?: Resolver<Array<ResolversTypes['Note']>, ParentType, ContextType>;
+  notes?: Resolver<Maybe<Array<ResolversTypes['Note']>>, ParentType, ContextType>;
   poster?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   providers?: Resolver<Maybe<ResolversTypes['Providers']>, ParentType, ContextType, RequireFields<MovieProvidersArgs, 'region'>>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;

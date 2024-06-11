@@ -85,7 +85,7 @@ type Movie {
   rating: Float
   trailerUrl: String
   providers(region: String!): Providers
-  notes: [Note!]!
+  notes: [Note!]
 }
 
 type Note {
