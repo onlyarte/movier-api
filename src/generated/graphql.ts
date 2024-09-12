@@ -75,6 +75,7 @@ export type Mutation = {
   unfollowUser: Scalars['Boolean'];
   unsaveList: Scalars['Boolean'];
   updateList: List;
+  updateUser: User;
 };
 
 
@@ -142,6 +143,11 @@ export type MutationUpdateListArgs = {
   input: UpdateListInput;
 };
 
+
+export type MutationUpdateUserArgs = {
+  input: UdateUserInput;
+};
+
 export type Note = {
   __typename?: 'Note';
   content: Scalars['String'];
@@ -194,6 +200,13 @@ export type QueryUserArgs = {
   id: Scalars['String'];
 };
 
+export type UdateUserInput = {
+  __typename?: 'UdateUserInput';
+  about?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  photoUrl?: Maybe<Scalars['String']>;
+};
+
 export type UpdateListInput = {
   cover?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
@@ -202,6 +215,7 @@ export type UpdateListInput = {
 
 export type User = {
   __typename?: 'User';
+  about?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   followers: Array<User>;
   following: Array<User>;
@@ -295,6 +309,7 @@ export type ResolversTypes = {
   Providers: ResolverTypeWrapper<ProvidersModel>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  UdateUserInput: ResolverTypeWrapper<UdateUserInput>;
   UpdateListInput: UpdateListInput;
   User: ResolverTypeWrapper<UserModel>;
 };
@@ -315,6 +330,7 @@ export type ResolversParentTypes = {
   Providers: ProvidersModel;
   Query: {};
   String: Scalars['String'];
+  UdateUserInput: UdateUserInput;
   UpdateListInput: UpdateListInput;
   User: UserModel;
 };
@@ -368,6 +384,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   unfollowUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnfollowUserArgs, 'id'>>;
   unsaveList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnsaveListArgs, 'id'>>;
   updateList?: Resolver<ResolversTypes['List'], ParentType, ContextType, RequireFields<MutationUpdateListArgs, 'id' | 'input'>>;
+  updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>;
 };
 
 export type NoteResolvers<ContextType = any, ParentType extends ResolversParentTypes['Note'] = ResolversParentTypes['Note']> = {
@@ -401,7 +418,15 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
 };
 
+export type UdateUserInputResolvers<ContextType = any, ParentType extends ResolversParentTypes['UdateUserInput'] = ResolversParentTypes['UdateUserInput']> = {
+  about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  photoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   followers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   following?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
@@ -422,6 +447,7 @@ export type Resolvers<ContextType = any> = {
   Provider?: ProviderResolvers<ContextType>;
   Providers?: ProvidersResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  UdateUserInput?: UdateUserInputResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
 

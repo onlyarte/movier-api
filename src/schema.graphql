@@ -8,6 +8,7 @@ type Query {
 type Mutation {
   followUser(id: String!): Boolean!
   unfollowUser(id: String!): Boolean!
+  updateUser(input: UdateUserInput!): User!
   createList(input: CreateListInput!): List!
   updateList(id: String!, input: UpdateListInput!): List!
   deleteList(id: String!): Boolean!
@@ -27,10 +28,17 @@ type User {
   email: String!
   name: String!
   photoUrl: String!
+  about: String
   following: [User!]!
   followers: [User!]!
   lists: [List!]!
   savedLists: [List!]!
+}
+
+type UdateUserInput {
+  name: String
+  photoUrl: String
+  about: String
 }
 
 type List {

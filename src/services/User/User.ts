@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { db } from './firebase';
+import { firestore } from './firebase';
 
 class UserService {
   prisma: PrismaClient;
@@ -20,19 +20,41 @@ class UserService {
     sub,
     email,
     name,
-    picture,
+    photoUrl,
   }: {
     sub: string;
     email: string;
     name: string;
-    picture: string;
+    photoUrl: string;
   }) {
     return this.prisma.user.create({
       data: {
         sub,
         email,
         name,
-        photoUrl: picture,
+        photoUrl,
+      },
+    });
+  }
+
+  async update(
+    currentUserId: string,
+    {
+      name,
+      photoUrl,
+      about,
+    }: {
+      name?: string | null;
+      photoUrl?: string | null;
+      about?: string | null;
+    }
+  ) {
+    return this.prisma.user.update({
+      where: { id: currentUserId },
+      data: {
+        name: name ?? undefined,
+        photoUrl,
+        about,
       },
     });
   }
@@ -59,23 +81,31 @@ class UserService {
 
   async authInfo(base64Token: string) {
     const sessionToken = Buffer.from(base64Token, 'base64').toString('ascii');
-    const sessionSnapshot = await db
+
+    const sessionSnapshot = await firestore
       .collection('sessions')
       .where('sessionToken', '==', sessionToken)
       .get();
+
     if (sessionSnapshot.empty) {
       throw new Error('Session not found');
     }
+
     const session = sessionSnapshot.docs[0]?.data();
 
-    const userSnapshot = await db.collection('users').doc(session.userId).get();
+    const userSnapshot = await firestore
+      .collection('users')
+      .doc(session.userId)
+      .get();
+
     const user = userSnapshot.data();
     if (!user) throw new Error('User not found');
+
     return {
       sub: session.userId,
       email: user.email,
       name: user.name,
-      picture: user.image,
+      photoUrl: user.image,
     };
   }
 }

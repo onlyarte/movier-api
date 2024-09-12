@@ -11,6 +11,6 @@ const app = getApps().length
       }),
     });
 
-const db = getFirestore();
+const firestore = getFirestore();
 
-export { app, db };
+export { app, firestore };

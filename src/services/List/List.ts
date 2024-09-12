@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import { CreateListInput, UpdateListInput } from '../../generated/graphql';
 import { ParsedMovie } from '../TMDB/types';
 import { assertListOwner } from './validators';
@@ -29,7 +29,7 @@ class ListService {
     return { ...list, movies: list.movies.reverse() };
   }
 
-  async getRecommendations(listId: string) {
+  async getRecommendations(listId: string, currentUser?: User | null) {
     const list = await this.prisma.list.findUnique({
       where: { id: listId },
       include: { movies: true, recommendations: true },
@@ -39,6 +39,7 @@ class ListService {
     const weekAgo = new Date().valueOf() - 7 * 24 * 60 * 60 * 1000;
     if (
       list.recommendations?.length &&
+      (!currentUser || list.ownerId === currentUser.id) &&
       list.recommendationsUpdatedAt &&
       list.recommendationsUpdatedAt.valueOf() > weekAgo
     ) {
@@ -46,7 +47,8 @@ class ListService {
     }
 
     const rawRecommendations = await this.recommendationAI.findSimilar(
-      list.movies
+      list.movies,
+      currentUser?.id
     );
     const recommendations = await this.tmdb.findByTitleAndYear(
       rawRecommendations

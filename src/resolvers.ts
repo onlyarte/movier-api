@@ -25,14 +25,12 @@ export const resolvers: ResolversWithContext = {
     },
     search: async (parent, args, context, info) => {
       const direct = await context.services.tmdb.search(args.input);
-      if (
-        direct.length > 5 ||
-        direct[0]?.title.toLowerCase() === args.input.toLowerCase()
-      ) {
+      if (direct[0]?.title.toLowerCase() === args.input.toLowerCase()) {
         return direct;
       }
       const ambiguous = await context.services.recommendationAI.search(
-        args.input
+        args.input,
+        context.currentUser?.about
       );
       return uniqBy(
         [
@@ -53,6 +51,10 @@ export const resolvers: ResolversWithContext = {
       const currentUser = assertCurrentUser(context);
       await context.services.user.unfollow(currentUser.id, args.id);
       return true;
+    },
+    updateUser: async (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      return context.services.user.update(currentUser.id, args.input);
     },
     createList: (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
@@ -130,7 +132,10 @@ export const resolvers: ResolversWithContext = {
   List: {
     ...makeObjectResolvers('list', ['owner', 'movies']),
     recommendations: async (parent, args, context, info) => {
-      return context.services.list.getRecommendations(parent.id);
+      return context.services.list.getRecommendations(
+        parent.id,
+        context.currentUser
+      );
     },
   },
   User: makeObjectResolvers('user', [

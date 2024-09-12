@@ -16,6 +16,7 @@ model User {
   email     String   @unique
   name      String
   photoUrl  String?
+  about     String?
   createdAt DateTime @default(now())
 
   followingIds String[] @db.ObjectId
