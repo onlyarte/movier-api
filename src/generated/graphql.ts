@@ -145,7 +145,7 @@ export type MutationUpdateListArgs = {
 
 
 export type MutationUpdateUserArgs = {
-  input: UdateUserInput;
+  input: UpdateUserInput;
 };
 
 export type Note = {
@@ -200,17 +200,16 @@ export type QueryUserArgs = {
   id: Scalars['String'];
 };
 
-export type UdateUserInput = {
-  __typename?: 'UdateUserInput';
-  about?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  photoUrl?: Maybe<Scalars['String']>;
-};
-
 export type UpdateListInput = {
   cover?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateUserInput = {
+  about?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  photoUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {
@@ -309,8 +308,8 @@ export type ResolversTypes = {
   Providers: ResolverTypeWrapper<ProvidersModel>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  UdateUserInput: ResolverTypeWrapper<UdateUserInput>;
   UpdateListInput: UpdateListInput;
+  UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<UserModel>;
 };
 
@@ -330,8 +329,8 @@ export type ResolversParentTypes = {
   Providers: ProvidersModel;
   Query: {};
   String: Scalars['String'];
-  UdateUserInput: UdateUserInput;
   UpdateListInput: UpdateListInput;
+  UpdateUserInput: UpdateUserInput;
   User: UserModel;
 };
 
@@ -418,13 +417,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
 };
 
-export type UdateUserInputResolvers<ContextType = any, ParentType extends ResolversParentTypes['UdateUserInput'] = ResolversParentTypes['UdateUserInput']> = {
-  about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  photoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -447,7 +439,6 @@ export type Resolvers<ContextType = any> = {
   Provider?: ProviderResolvers<ContextType>;
   Providers?: ProvidersResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  UdateUserInput?: UdateUserInputResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
 
