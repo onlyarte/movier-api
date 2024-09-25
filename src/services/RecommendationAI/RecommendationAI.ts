@@ -2,6 +2,10 @@ import { Movie } from '@prisma/client';
 import { z } from 'zod';
 import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
+import { ChatCompletionCreateParamsNonStreaming } from 'openai/resources';
+import fetch from 'node-fetch';
+import config from '../../config';
+import { SEARCH_FUNCTION_NAME, tools } from './tools';
 
 const Recommendation = z.object({
   movies: z.array(
@@ -24,13 +28,82 @@ class RecommendationAIService {
     this.model = model;
   }
 
+  async withTools(body: ChatCompletionCreateParamsNonStreaming) {
+    let completion = await this.openai.chat.completions.create({
+      ...body,
+      tools,
+      tool_choice: 'auto',
+    });
+
+    if (
+      completion.choices[0]?.finish_reason === 'tool_calls' &&
+      completion.choices[0].message.tool_calls
+    ) {
+      const toolCallResults = [];
+
+      for (const toolCall of completion.choices[0].message.tool_calls) {
+        try {
+          if (toolCall.function.name === SEARCH_FUNCTION_NAME) {
+            const args: { query: string } = JSON.parse(
+              toolCall.function.arguments
+            );
+
+            const searchResponse = await fetch(
+              'https://api.tavily.com/search',
+              {
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  query: args.query,
+                  api_key: config.tavilyApiKey,
+                }),
+                method: 'POST',
+              }
+            );
+
+            const toolCallResult = {
+              role: 'tool' as const,
+              content: await searchResponse.text(),
+              tool_call_id: toolCall.id,
+            };
+
+            toolCallResults.push(toolCallResult);
+          } else {
+            throw new Error(`Tool not found: ${toolCall.function.name}`);
+          }
+        } catch (e) {
+          console.error(e);
+
+          toolCallResults.push({
+            role: 'tool' as const,
+            content: 'ERROR',
+            tool_call_id: toolCall.id,
+          });
+        }
+      }
+
+      completion = await this.openai.chat.completions.create({
+        ...body,
+        messages: [
+          ...body.messages,
+          completion.choices[0].message,
+          ...toolCallResults,
+        ],
+      });
+    }
+
+    return completion;
+  }
+
   async findSimilar(
     movies: Movie[],
     aboutUser?: string,
     max = MAX_DEFAULT,
     maxTokens = MAX_TOKENS_DEFAULT
   ) {
-    const completion = await this.openai.chat.completions.create({
+    const completion = await this.withTools({
       messages: [
         {
           role: 'system',
@@ -68,7 +141,7 @@ class RecommendationAIService {
     max = MAX_DEFAULT,
     maxTokens = MAX_TOKENS_DEFAULT
   ) {
-    const completion = await this.openai.chat.completions.create({
+    const completion = await this.withTools({
       messages: [
         {
           role: 'system',
