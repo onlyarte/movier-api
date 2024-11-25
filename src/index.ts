@@ -12,8 +12,8 @@ import {
 
 import { schema } from './resolvers';
 import { contextFactory } from './context';
-import StorageService from './services/Storage';
 import config from './config';
+import uploadHandler from './services/Storage/uploadHandler';
 
 async function main() {
   const server = fastify({
@@ -25,21 +25,10 @@ async function main() {
     origin: '*',
   });
 
-  const storageService = new StorageService();
-
   server.route({
     method: 'POST',
-    url: '/file',
-    handler: async (request, reply) => {
-      const file = await request.file({ limits: { fileSize: 1000000 } });
-      try {
-        const url = await storageService.upload(file!);
-        reply.send(url);
-      } catch (error) {
-        console.log(error);
-        reply.code(500).send();
-      }
-    },
+    url: '/upload',
+    handler: uploadHandler,
   });
 
   server.route({

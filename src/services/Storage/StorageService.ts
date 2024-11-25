@@ -12,12 +12,21 @@ class StorageService {
     this.cloudStorage = new Storage();
   }
 
-  async upload(file: MultipartFile, path = 'uploads/') {
+  async upload(
+    file: MultipartFile,
+    path = 'uploads/',
+    metadata?: Record<string, any>
+  ) {
     const buffer = await file.toBuffer();
     const key = path + this.generateKey(file.filename);
 
     const uploadedFile = this.cloudStorage.bucket(config.bucket).file(key);
-    await uploadedFile.save(buffer);
+    await uploadedFile.save(buffer, {
+      metadata: {
+        contentType: file.mimetype,
+        ...metadata,
+      },
+    });
 
     return uploadedFile.publicUrl();
   }

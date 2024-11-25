@@ -7,12 +7,14 @@ import ListService from './services/List';
 import RecommendationAIService from './services/RecommendationAI';
 import config from './config';
 import NoteService from './services/Note';
+import StorageService from './services/Storage';
 
 const prisma = new PrismaClient();
 const tmdbService = new TMDBService(config.tmdbApiKey);
 const userService = new UserService(prisma);
 const recommendationAIService = new RecommendationAIService();
 const noteService = new NoteService(prisma);
+const storageService = new StorageService();
 
 const listService = new ListService(
   prisma,
@@ -26,6 +28,7 @@ const services = {
   list: listService,
   note: noteService,
   recommendationAI: recommendationAIService,
+  storage: storageService,
 };
 
 export type GraphQLContext = {
@@ -36,6 +39,7 @@ export type GraphQLContext = {
     list: ListService;
     note: NoteService;
     recommendationAI: RecommendationAIService;
+    storage: StorageService;
   };
   currentUser: User | null;
 };
