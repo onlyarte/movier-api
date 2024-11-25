@@ -107,7 +107,7 @@ class RecommendationAIService {
       messages: [
         {
           role: 'system',
-          content: `You are a recommentation API for movies. The user will provide you with a list of movies that they have already watched and liked. You have to recommend them up to ${max} movies that they might like.`,
+          content: `You are a recommentation API for movies. The user will provide you with a list of movies. You have to recommend them up to ${max} similar movies.`,
         },
         ...(aboutUser
           ? [

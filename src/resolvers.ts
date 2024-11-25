@@ -8,6 +8,7 @@ import { assertCurrentUser } from './utils/validators';
 
 /// <reference path="../node_modules/graphql-import-node/register.d.ts" />
 import typeDefs from './schema.graphql';
+import { ParsedMovie } from './services/TMDB/types';
 
 type ResolversWithContext = Resolvers<GraphQLContext>;
 
@@ -28,17 +29,18 @@ export const resolvers: ResolversWithContext = {
       if (direct[0]?.title.toLowerCase() === args.input.toLowerCase()) {
         return direct;
       }
-      const ambiguous = await context.services.recommendationAI.search(
-        args.input,
-        context.currentUser?.about
-      );
-      return uniqBy(
-        [
-          ...direct,
-          ...(await context.services.tmdb.findByTitleAndYear(ambiguous)),
-        ],
-        'tmdbId'
-      );
+      let ambiguous: ParsedMovie[] = [];
+      try {
+        ambiguous = await context.services.tmdb.findByTitleAndYear(
+          await context.services.recommendationAI.search(
+            args.input,
+            context.currentUser?.about
+          )
+        );
+      } catch (error) {
+        console.error(error);
+      }
+      return uniqBy([...ambiguous, ...direct], 'tmdbId');
     },
   },
   Mutation: {

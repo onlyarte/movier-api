@@ -46,13 +46,15 @@ class ListService {
       return list.recommendations;
     }
 
-    const rawRecommendations = await this.recommendationAI.findSimilar(
-      list.movies,
-      currentUser?.id
-    );
-    const recommendations = await this.tmdb.findByTitleAndYear(
-      rawRecommendations
-    );
+    let recommendations: ParsedMovie[] = [];
+    try {
+      recommendations = await this.tmdb.findByTitleAndYear(
+        await this.recommendationAI.findSimilar(list.movies, currentUser?.id)
+      );
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
 
     await this.prisma.list.update({
       where: { id: listId },
@@ -66,6 +68,7 @@ class ListService {
         recommendationsUpdatedAt: new Date(),
       },
     });
+
     return recommendations;
   }
 
