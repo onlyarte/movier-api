@@ -215,14 +215,17 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   about?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Date'];
   email: Scalars['String'];
+  favourite?: Maybe<List>;
   followers: Array<User>;
   following: Array<User>;
   id: Scalars['ID'];
   lists: Array<List>;
   name: Scalars['String'];
-  photoUrl: Scalars['String'];
+  photoUrl?: Maybe<Scalars['String']>;
   savedLists: Array<List>;
+  watchlist?: Maybe<List>;
 };
 
 
@@ -419,14 +422,17 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  favourite?: Resolver<Maybe<ResolversTypes['List']>, ParentType, ContextType>;
   followers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   following?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lists?: Resolver<Array<ResolversTypes['List']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  photoUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  photoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   savedLists?: Resolver<Array<ResolversTypes['List']>, ParentType, ContextType>;
+  watchlist?: Resolver<Maybe<ResolversTypes['List']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

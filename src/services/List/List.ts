@@ -82,6 +82,28 @@ class ListService {
     });
   }
 
+  async createDefaults(currentUserId: string) {
+    const watchlist = await this.prisma.list.create({
+      data: {
+        title: 'Watchlist',
+        owner: { connect: { id: currentUserId } },
+        watchlistOf: { connect: { id: currentUserId } },
+      },
+      include: { owner: true },
+    });
+
+    const favorite = await this.prisma.list.create({
+      data: {
+        title: 'Loved',
+        owner: { connect: { id: currentUserId } },
+        favouriteOf: { connect: { id: currentUserId } },
+      },
+      include: { owner: true },
+    });
+
+    return [watchlist, favorite];
+  }
+
   async update(listId: string, input: UpdateListInput, currentUserId: string) {
     assertListOwner(await this.get(listId), currentUserId);
     return this.prisma.list.update({

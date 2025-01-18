@@ -25,7 +25,7 @@ class UserService {
     sub: string;
     email: string;
     name: string;
-    photoUrl: string;
+    photoUrl?: string;
   }) {
     return this.prisma.user.create({
       data: {
@@ -105,7 +105,7 @@ class UserService {
       sub: session.userId,
       email: user.email,
       name: user.name,
-      photoUrl: user.image,
+      // photoUrl: user.image,
     };
   }
 }

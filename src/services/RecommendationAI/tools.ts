@@ -8,7 +8,7 @@ export const tools: ChatCompletionTool[] = [
     function: {
       name: SEARCH_FUNCTION_NAME,
       description:
-        "This function enables you to call an internet search engine. Call this function only when the user is asking you about recent or constantly changing data.",
+        'This function enables you to call an internet search engine.',
       parameters: {
         type: 'object',
         properties: {

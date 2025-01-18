@@ -42,6 +42,7 @@ export type GraphQLContext = {
     storage: StorageService;
   };
   currentUser: User | null;
+  clientIp: string | null;
 };
 
 async function authenticateUser(request: FastifyRequest): Promise<User | null> {
@@ -57,6 +58,11 @@ async function authenticateUser(request: FastifyRequest): Promise<User | null> {
     if (existingUser) return existingUser;
 
     const newUser = await services.user.create(authInfo);
+    try {
+      await services.list.createDefaults(newUser.id);
+    } catch (error) {
+      console.error(error);
+    }
     return newUser;
   } catch (error) {
     console.error(error);
@@ -67,9 +73,11 @@ async function authenticateUser(request: FastifyRequest): Promise<User | null> {
 export async function contextFactory(
   request: FastifyRequest
 ): Promise<GraphQLContext> {
+  console.log(request.ip);
   return {
     prisma,
     services,
     currentUser: await authenticateUser(request),
+    clientIp: request.ip,
   };
 }

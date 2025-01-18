@@ -145,6 +145,8 @@ export const resolvers: ResolversWithContext = {
     'following',
     'lists',
     'savedLists',
+    'watchlist',
+    'favourite',
   ]),
   Note: makeObjectResolvers('note', ['user', 'movie']),
 };

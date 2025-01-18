@@ -30,6 +30,9 @@ model User {
   savedListIds String[] @db.ObjectId
   savedLists   List[]   @relation(fields: [savedListIds], references: [id], "UserSavesList")
 
+  watchlist List? @relation("UserWatchlist")
+  favourite List? @relation("UserFavourite")
+
   notes Note[]
 }
 
@@ -53,6 +56,11 @@ model List {
 
   savedByIds String[] @db.ObjectId
   savedBy    User[]   @relation(fields: [savedByIds], references: [id], "UserSavesList")
+
+  watchlistOfId  String? @unique @db.ObjectId
+  watchlistOf    User?   @relation(fields: [watchlistOfId], references: [id], "UserWatchlist")
+  favouriteOfId String? @unique @db.ObjectId
+  favouriteOf    User?   @relation(fields: [favouriteOfId], references: [id], "UserFavourite")
 }
 
 model Movie {

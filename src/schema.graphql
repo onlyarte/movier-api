@@ -27,12 +27,15 @@ type User {
   id: ID!
   email: String!
   name: String!
-  photoUrl: String!
+  photoUrl: String
   about: String
+  createdAt: Date!
   following: [User!]!
   followers: [User!]!
   lists: [List!]!
   savedLists: [List!]!
+  watchlist: List
+  favourite: List
 }
 
 input UpdateUserInput {
