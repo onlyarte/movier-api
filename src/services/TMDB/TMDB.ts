@@ -126,7 +126,7 @@ class TheMovieDBService {
 
   async search(query: string, year?: number) {
     const safeQuery = encodeURIComponent(query);
-    let path = `/search/movie?query=${safeQuery}&language=en-US&page=1&include_adult=true&api_key=${this.apiKey}`;
+    let path = `/search/movie?query=${safeQuery}&page=1&api_key=${this.apiKey}`;
     if (year) {
       path += `&primary_release_year=${year}`;
     }
