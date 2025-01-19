@@ -1,5 +1,5 @@
 import { FastifyRequest } from 'fastify';
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient, User, UserLocation } from '@prisma/client';
 
 import TMDBService from './services/TMDB';
 import UserService from './services/User';
@@ -41,11 +41,12 @@ export type GraphQLContext = {
     recommendationAI: RecommendationAIService;
     storage: StorageService;
   };
-  currentUser: User | null;
-  clientIp: string | null;
+  currentUser: (User & { location?: UserLocation }) | null;
 };
 
-async function authenticateUser(request: FastifyRequest): Promise<User | null> {
+async function authenticateUser(
+  request: FastifyRequest
+): Promise<GraphQLContext['currentUser']> {
   try {
     if (!request.headers.authorization) return null;
 
@@ -54,10 +55,10 @@ async function authenticateUser(request: FastifyRequest): Promise<User | null> {
     );
     if (!authInfo) return null;
 
-    const existingUser = await services.user.get(authInfo.sub);
+    const existingUser = await services.user.get(authInfo.sub, true);
     if (existingUser) return existingUser;
 
-    const newUser = await services.user.create(authInfo);
+    const newUser = await services.user.create(authInfo, true);
     try {
       await services.list.createDefaults(newUser.id);
     } catch (error) {
@@ -73,11 +74,9 @@ async function authenticateUser(request: FastifyRequest): Promise<User | null> {
 export async function contextFactory(
   request: FastifyRequest
 ): Promise<GraphQLContext> {
-  console.log(request.ip);
   return {
     prisma,
     services,
     currentUser: await authenticateUser(request),
-    clientIp: request.ip,
   };
 }

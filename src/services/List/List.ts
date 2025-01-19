@@ -49,7 +49,7 @@ class ListService {
     let recommendations: ParsedMovie[] = [];
     try {
       recommendations = await this.tmdb.findByTitleAndYear(
-        await this.recommendationAI.findSimilar(list.movies, currentUser?.id)
+        await this.recommendationAI.findSimilar(list.movies, currentUser)
       );
     } catch (error) {
       console.error(error);

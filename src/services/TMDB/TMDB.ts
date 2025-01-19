@@ -51,7 +51,7 @@ class TheMovieDBService {
     return trailer ? `https://www.youtube.com/embed/${trailer.key}` : undefined;
   }
 
-  private parse(rawMovie: RawMovie, credits: RawCredits, videos?: RawVideos) {
+  private parse(rawMovie: RawMovie, credits?: RawCredits, videos?: RawVideos) {
     return {
       tmdbId: rawMovie.id,
       imdbId: rawMovie.imdb_id,
@@ -64,13 +64,13 @@ class TheMovieDBService {
       countries: rawMovie.production_countries.map((one) => one.name),
       genres: rawMovie.genres.map((one) => one.name),
       rating: Math.round(rawMovie.vote_average),
-      writers: credits.crew
+      writers: (credits?.crew ?? [])
         .filter((one) => one.department === 'Writing')
         .map((one) => one.name),
-      directors: credits.crew
+      directors: (credits?.crew ?? [])
         .filter((one) => one.department === 'Directing')
         .map((one) => one.name),
-      stars: credits.cast.slice(0, 5).map((one) => one.name),
+      stars: (credits?.cast ?? []).slice(0, 5).map((one) => one.name),
       trailerUrl: this.findTrailer(videos),
     } as ParsedMovie;
   }
@@ -132,7 +132,16 @@ class TheMovieDBService {
     }
     const response = await this.api.get(path);
     const { results } = response.data as RawSearch;
-    return Promise.all(results.map((one) => this.get(one.id)));
+    return Promise.all(
+      results.map((one) =>
+        this.parse({
+          ...one,
+          imdb_id: null,
+          production_countries: [],
+          genres: [],
+        })
+      )
+    );
   }
 
   async findByExternalId(id: string, source = 'imdb_id') {
@@ -151,9 +160,16 @@ class TheMovieDBService {
 
   async findByTitleAndYear(movies: { title: string; year: number }[]) {
     const results = await Promise.all(
-      movies.map(({ title, year }) => this.search(title, year))
+      movies.map(async ({ title, year }) => {
+        try {
+          const matches = await this.search(title, year);
+          return matches[0];
+        } catch {
+          return undefined;
+        }
+      })
     );
-    return results.map((one) => one[0]).filter(Boolean);
+    return results.filter(Boolean) as ParsedMovie[];
   }
 }
 

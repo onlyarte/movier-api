@@ -33,7 +33,21 @@ model User {
   watchlist List? @relation("UserWatchlist")
   favourite List? @relation("UserFavourite")
 
-  notes Note[]
+  notes    Note[]
+  location UserLocation?
+}
+
+model UserLocation {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  country  String?
+  region   String?
+  city     String?
+  ip       String?
+  timezone String?
 }
 
 model List {
@@ -57,10 +71,10 @@ model List {
   savedByIds String[] @db.ObjectId
   savedBy    User[]   @relation(fields: [savedByIds], references: [id], "UserSavesList")
 
-  watchlistOfId  String? @unique @db.ObjectId
-  watchlistOf    User?   @relation(fields: [watchlistOfId], references: [id], "UserWatchlist")
+  watchlistOfId String? @unique @db.ObjectId
+  watchlistOf   User?   @relation(fields: [watchlistOfId], references: [id], "UserWatchlist")
   favouriteOfId String? @unique @db.ObjectId
-  favouriteOf    User?   @relation(fields: [favouriteOfId], references: [id], "UserFavourite")
+  favouriteOf   User?   @relation(fields: [favouriteOfId], references: [id], "UserFavourite")
 }
 
 model Movie {

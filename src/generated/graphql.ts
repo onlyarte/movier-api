@@ -76,6 +76,7 @@ export type Mutation = {
   unsaveList: Scalars['Boolean'];
   updateList: List;
   updateUser: User;
+  upsertUserLocation: Scalars['Boolean'];
 };
 
 
@@ -148,6 +149,11 @@ export type MutationUpdateUserArgs = {
   input: UpdateUserInput;
 };
 
+
+export type MutationUpsertUserLocationArgs = {
+  input: UpsertUserLocationInput;
+};
+
 export type Note = {
   __typename?: 'Note';
   content: Scalars['String'];
@@ -212,6 +218,14 @@ export type UpdateUserInput = {
   photoUrl?: InputMaybe<Scalars['String']>;
 };
 
+export type UpsertUserLocationInput = {
+  city?: InputMaybe<Scalars['String']>;
+  country?: InputMaybe<Scalars['String']>;
+  ip?: InputMaybe<Scalars['String']>;
+  region?: InputMaybe<Scalars['String']>;
+  timezone?: InputMaybe<Scalars['String']>;
+};
+
 export type User = {
   __typename?: 'User';
   about?: Maybe<Scalars['String']>;
@@ -222,10 +236,22 @@ export type User = {
   following: Array<User>;
   id: Scalars['ID'];
   lists: Array<List>;
+  location?: Maybe<UserLocation>;
   name: Scalars['String'];
   photoUrl?: Maybe<Scalars['String']>;
   savedLists: Array<List>;
   watchlist?: Maybe<List>;
+};
+
+export type UserLocation = {
+  __typename?: 'UserLocation';
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  ip?: Maybe<Scalars['String']>;
+  region?: Maybe<Scalars['String']>;
+  timezone?: Maybe<Scalars['String']>;
+  userId: Scalars['String'];
 };
 
 
@@ -313,7 +339,9 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   UpdateListInput: UpdateListInput;
   UpdateUserInput: UpdateUserInput;
+  UpsertUserLocationInput: UpsertUserLocationInput;
   User: ResolverTypeWrapper<UserModel>;
+  UserLocation: ResolverTypeWrapper<UserLocation>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -334,7 +362,9 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   UpdateListInput: UpdateListInput;
   UpdateUserInput: UpdateUserInput;
+  UpsertUserLocationInput: UpsertUserLocationInput;
   User: UserModel;
+  UserLocation: UserLocation;
 };
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
@@ -387,6 +417,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   unsaveList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnsaveListArgs, 'id'>>;
   updateList?: Resolver<ResolversTypes['List'], ParentType, ContextType, RequireFields<MutationUpdateListArgs, 'id' | 'input'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>;
+  upsertUserLocation?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpsertUserLocationArgs, 'input'>>;
 };
 
 export type NoteResolvers<ContextType = any, ParentType extends ResolversParentTypes['Note'] = ResolversParentTypes['Note']> = {
@@ -429,10 +460,22 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   following?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lists?: Resolver<Array<ResolversTypes['List']>, ParentType, ContextType>;
+  location?: Resolver<Maybe<ResolversTypes['UserLocation']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   photoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   savedLists?: Resolver<Array<ResolversTypes['List']>, ParentType, ContextType>;
   watchlist?: Resolver<Maybe<ResolversTypes['List']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserLocationResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserLocation'] = ResolversParentTypes['UserLocation']> = {
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  ip?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  region?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  timezone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -446,5 +489,6 @@ export type Resolvers<ContextType = any> = {
   Providers?: ProvidersResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  UserLocation?: UserLocationResolvers<ContextType>;
 };
 

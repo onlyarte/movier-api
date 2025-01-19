@@ -34,7 +34,7 @@ export const resolvers: ResolversWithContext = {
         ambiguous = await context.services.tmdb.findByTitleAndYear(
           await context.services.recommendationAI.search(
             args.input,
-            context.currentUser?.about
+            context.currentUser
           )
         );
       } catch (error) {
@@ -57,6 +57,10 @@ export const resolvers: ResolversWithContext = {
     updateUser: async (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
       return context.services.user.update(currentUser.id, args.input);
+    },
+    upsertUserLocation: async (parent, args, context, info) => {
+      const currentUser = assertCurrentUser(context);
+      return context.services.user.upsertLocation(currentUser.id, args.input);
     },
     createList: (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
@@ -147,6 +151,7 @@ export const resolvers: ResolversWithContext = {
     'savedLists',
     'watchlist',
     'favourite',
+    'location',
   ]),
   Note: makeObjectResolvers('note', ['user', 'movie']),
 };

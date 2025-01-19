@@ -8,25 +8,29 @@ class UserService {
     this.prisma = prisma;
   }
 
-  async get(id: string) {
+  async get(id: string, includeLocation = false) {
     return this.prisma.user.findFirst({
       where: {
         OR: [...(id.length === 24 ? [{ id }] : []), { sub: id }, { email: id }],
       },
+      include: includeLocation ? { location: true } : undefined,
     });
   }
 
-  async create({
-    sub,
-    email,
-    name,
-    photoUrl,
-  }: {
-    sub: string;
-    email: string;
-    name: string;
-    photoUrl?: string;
-  }) {
+  async create(
+    {
+      sub,
+      email,
+      name,
+      photoUrl,
+    }: {
+      sub: string;
+      email: string;
+      name: string;
+      photoUrl?: string;
+    },
+    includeLocation = false
+  ) {
     return this.prisma.user.create({
       data: {
         sub,
@@ -34,6 +38,7 @@ class UserService {
         name,
         photoUrl,
       },
+      include: includeLocation ? { location: true } : undefined,
     });
   }
 
@@ -57,6 +62,30 @@ class UserService {
         about,
       },
     });
+  }
+
+  async upsertLocation(
+    currentUserId: string,
+    payload: {
+      country?: string | null;
+      region?: string | null;
+      city?: string | null;
+      ip?: string | null;
+      timezone?: string | null;
+    }
+  ) {
+    await this.prisma.userLocation.upsert({
+      where: {
+        userId: currentUserId,
+      },
+      update: payload,
+      create: {
+        user: { connect: { id: currentUserId } },
+        ...payload,
+      },
+    });
+
+    return true;
   }
 
   async follow(currentUserId: string, followingId: string) {

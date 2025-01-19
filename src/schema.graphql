@@ -9,6 +9,7 @@ type Mutation {
   followUser(id: String!): Boolean!
   unfollowUser(id: String!): Boolean!
   updateUser(input: UpdateUserInput!): User!
+  upsertUserLocation(input: UpsertUserLocationInput!): Boolean!
   createList(input: CreateListInput!): List!
   updateList(id: String!, input: UpdateListInput!): List!
   deleteList(id: String!): Boolean!
@@ -36,12 +37,31 @@ type User {
   savedLists: [List!]!
   watchlist: List
   favourite: List
+  location: UserLocation
+}
+
+type UserLocation {
+  id: ID!
+  userId: String!
+  country: String
+  region: String
+  city: String
+  ip: String
+  timezone: String
 }
 
 input UpdateUserInput {
   name: String
   photoUrl: String
   about: String
+}
+
+input UpsertUserLocationInput {
+  country: String
+  region: String
+  city: String
+  ip: String
+  timezone: String
 }
 
 type List {
