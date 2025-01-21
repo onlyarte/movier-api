@@ -158,18 +158,15 @@ class TheMovieDBService {
     return null;
   }
 
-  async findByTitleAndYear(movies: { title: string; year: number }[]) {
-    const results = await Promise.all(
-      movies.map(async ({ title, year }) => {
-        try {
-          const matches = await this.search(title, year);
-          return matches[0];
-        } catch {
-          return undefined;
-        }
-      })
-    );
-    return results.filter(Boolean) as ParsedMovie[];
+  async *findAll(generator: AsyncGenerator<{ title: string; year: number }>) {
+    for await (const { title, year } of generator) {
+      try {
+        const matches = await this.search(title, year);
+        if (matches[0]) yield { id: matches[0].tmdbId, ...matches[0] };
+      } catch {
+        // ignore
+      }
+    }
   }
 }
 

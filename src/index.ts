@@ -95,7 +95,7 @@ async function main() {
       const generator = context.services.recommendationAI.search(input, {
         user: context.currentUser,
       });
-      streamJson(generator, reply);
+      streamJson(context.services.tmdb.findAll(generator), reply);
     },
   });
 

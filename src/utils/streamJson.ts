@@ -7,7 +7,10 @@ export const streamJson = async <T extends {}>(
   reply.raw.writeHead(200, {
     'Content-Type': 'application/json',
     'Transfer-Encoding': 'chunked',
+    'Cache-Control': 'no-transform',
+    'Content-Encoding': 'identity',
   });
+  reply.raw.flushHeaders();
 
   try {
     for await (const object of generator) {
