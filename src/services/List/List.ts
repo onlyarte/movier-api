@@ -36,40 +36,71 @@ class ListService {
     });
     if (!list || list.movies.length < 5) return [];
 
+    const alreadyInThisList = new Set(list.movies.map((movie) => movie.tmdbId));
+
+    const userLists =
+      currentUser &&
+      (await this.prisma.list.findMany({
+        where: { ownerId: currentUser.id },
+        select: { movieIds: true },
+      }));
+
+    const alreadySeenByUser = new Set(
+      (userLists ?? []).map((list) => list.movieIds).flat()
+    );
+
     const weekAgo = new Date().valueOf() - 7 * 24 * 60 * 60 * 1000;
     if (
       list.recommendations?.length &&
-      (!currentUser || list.ownerId === currentUser.id) &&
       list.recommendationsUpdatedAt &&
       list.recommendationsUpdatedAt.valueOf() > weekAgo
     ) {
-      return list.recommendations;
+      return list.recommendations.filter(
+        (movie) =>
+          // don't return those that are already in the list
+          !alreadyInThisList.has(movie.tmdbId) &&
+          // don't return those that are in any of this user's lists
+          !alreadySeenByUser.has(movie.id)
+      );
     }
 
+    const generator = this.recommendationAI.findSimilar(list, {
+      user: currentUser,
+    });
     let recommendations: ParsedMovie[] = [];
-    try {
-      recommendations = await this.tmdb.findByTitleAndYear(
-        await this.recommendationAI.findSimilar(list.movies, currentUser)
-      );
-    } catch (error) {
-      console.error(error);
-      return [];
+    for await (const { title, year } of generator) {
+      try {
+        const match = (await this.tmdb.search(title, year))[0];
+        match && recommendations.push();
+      } catch {
+        // ignore
+      }
     }
 
     await this.prisma.list.update({
       where: { id: listId },
+      data: { recommendationIds: [] },
+    });
+
+    const updatedList = await this.prisma.list.update({
+      where: { id: listId },
       data: {
         recommendations: {
-          connectOrCreate: recommendations.map((movie) => ({
-            where: { tmdbId: movie.tmdbId },
-            create: movie,
-          })),
+          connectOrCreate: recommendations
+            .filter((movie) => !alreadyInThisList.has(movie.tmdbId))
+            .map((movie) => ({
+              where: { tmdbId: movie.tmdbId },
+              create: movie,
+            })),
         },
         recommendationsUpdatedAt: new Date(),
       },
+      include: { recommendations: true },
     });
 
-    return recommendations;
+    return updatedList.recommendations.filter(
+      (movie) => !alreadySeenByUser.has(movie.id)
+    );
   }
 
   async create(input: CreateListInput, currentUserId: string) {

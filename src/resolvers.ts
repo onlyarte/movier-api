@@ -26,21 +26,28 @@ export const resolvers: ResolversWithContext = {
     },
     search: async (parent, args, context, info) => {
       const direct = await context.services.tmdb.search(args.input);
-      if (direct[0]?.title.toLowerCase() === args.input.toLowerCase()) {
+      if (direct[0]?.title.toLowerCase().startsWith(args.input.toLowerCase())) {
         return direct;
       }
-      let ambiguous: ParsedMovie[] = [];
+
       try {
-        ambiguous = await context.services.tmdb.findByTitleAndYear(
-          await context.services.recommendationAI.search(
-            args.input,
-            context.currentUser
-          )
-        );
+        const generator = context.services.recommendationAI.search(args.input, {
+          user: context.currentUser,
+        });
+        const results: ParsedMovie[] = [];
+        for await (const { title, year } of generator) {
+          try {
+            const match = (await context.services.tmdb.search(title, year))[0];
+            match && results.push(match);
+          } catch {
+            // ignore
+          }
+        }
+        return results;
       } catch (error) {
         console.error(error);
+        return direct;
       }
-      return uniqBy([...ambiguous, ...direct], 'tmdbId');
     },
   },
   Mutation: {

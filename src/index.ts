@@ -14,6 +14,7 @@ import { schema } from './resolvers';
 import { contextFactory } from './context';
 import config from './config';
 import uploadHandler from './services/Storage/uploadHandler';
+import { streamJson } from './utils/streamJson';
 
 async function main() {
   const server = fastify({
@@ -79,6 +80,22 @@ async function main() {
       reply.raw.setHeader('Access-Control-Allow-Origin', '*');
 
       sendResult(result, reply.raw);
+    },
+  });
+
+  server.route({
+    method: 'GET',
+    url: '/search',
+    handler: async (request, reply) => {
+      const context = await contextFactory(request);
+      const input = (request.query as any)?.input as string;
+      if (!input || typeof input !== 'string') {
+        return reply.code(400).send('`input` is required');
+      }
+      const generator = context.services.recommendationAI.search(input, {
+        user: context.currentUser,
+      });
+      streamJson(generator, reply);
     },
   });
 
