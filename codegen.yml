@@ -1,14 +1,14 @@
 overwrite: true
-schema: './src/schema.graphql'
+schema: "./src/schema.graphql"
 documents: null
 generates:
   src/generated/graphql.ts:
     plugins:
-      - 'typescript'
-      - 'typescript-resolvers'
+      - "typescript"
+      - "typescript-resolvers"
     config:
       mappers:
-        User: '@prisma/client#User as UserModel'
-        List: '@prisma/client#List as ListModel'
-        Movie: 'src/services/TMDB/types#ParsedMovie as MovieModel'
-        Providers: 'src/services/TMDB/types#ParsedProviders as ProvidersModel'
+        User: "@prisma/client#User as UserModel"
+        List: "@prisma/client#List as ListModel"
+        Movie: "src/services/Movie/TMDB/types#Movie as MovieModel"
+        Providers: "src/services/Movie/TMDB/types#Providers as ProvidersModel"

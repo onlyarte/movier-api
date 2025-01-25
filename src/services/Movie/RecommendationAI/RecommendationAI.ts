@@ -34,14 +34,14 @@ type Options = {
 
 const defaultOptions: Options = {
   maxResults: 20,
-  maxTokens: 20 * 200,
+  maxTokens: 20 * 300,
 };
 
 class RecommendationAIService {
   private openai: OpenAI;
   private model: string;
 
-  constructor(model = 'gpt-4o-mini-2024-07-18') {
+  constructor(model = 'gpt-4o-2024-11-20') {
     this.openai = new OpenAI();
     this.model = model;
   }
@@ -152,7 +152,7 @@ class RecommendationAIService {
           role: 'system',
           content: `You're a smart search engine for movies. The user will send you a query and you have to find up to ${
             options.maxResults
-          } movies that are somehow relevant to that query. Today is ${new Date().toDateString()}.`,
+          } movies that are somehow relevant to that query. Order movies by relevance and rating. Today is ${new Date().toDateString()}.`,
         },
         ...(user?.about || user?.location?.country
           ? [

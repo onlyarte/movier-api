@@ -1,7 +1,7 @@
 type Query {
   user(id: String!): User
   list(id: String!): List
-  movie(id: Int!): Movie!
+  movie(tmdbId: Int!): Movie!
   search(input: String!): [Movie!]!
 }
 
@@ -15,10 +15,10 @@ type Mutation {
   deleteList(id: String!): Boolean!
   saveList(id: String!): Boolean!
   unsaveList(id: String!): Boolean!
-  pushMovie(listId: String!, movieId: Int!): Boolean!
-  pullMovie(listId: String!, movieId: Int!): Boolean!
+  pushMovie(listId: String!, movieTmdbId: Int!): Boolean!
+  pullMovie(listId: String!, movieTmdbId: Int!): Boolean!
   importMoviesFromImdb(listId: String!, imdbIds: [String!]!): Boolean!
-  addNoteToMovie(movieId: Int!, content: String!): Note!
+  addNoteToMovie(movieTmdbId: Int!, content: String!): Note!
   deleteNoteFromMovie(noteId: String!): Boolean!
 }
 
@@ -89,20 +89,20 @@ input UpdateListInput {
 }
 
 type Provider {
-  id: Int!
+  id: ID!
   providerName: String!
   providerLogoUrl: String!
 }
 
 type Providers {
-  id: Int!
+  id: ID!
   flatrate: [Provider!]
   rent: [Provider!]
   buy: [Provider!]
 }
 
 type Movie {
-  id: Int!
+  tmdbId: ID!
   imdbId: String
   title: String!
   description: String

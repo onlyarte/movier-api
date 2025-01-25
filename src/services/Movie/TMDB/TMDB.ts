@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import { setupCache } from 'axios-cache-interceptor';
 import {
   Configuration,
-  ParsedMovie,
+  Movie,
   RawCredits,
   RawMovie,
   RawProvider,
@@ -48,10 +48,14 @@ class TheMovieDBService {
       ({ site, type, official }) =>
         site === 'YouTube' && type === 'Trailer' && official
     );
-    return trailer ? `https://www.youtube.com/embed/${trailer.key}` : undefined;
+    return trailer ? `https://www.youtube.com/embed/${trailer.key}` : null;
   }
 
-  private parse(rawMovie: RawMovie, credits?: RawCredits, videos?: RawVideos) {
+  private parse(
+    rawMovie: RawMovie,
+    credits?: RawCredits,
+    videos?: RawVideos
+  ): Movie {
     return {
       tmdbId: rawMovie.id,
       imdbId: rawMovie.imdb_id,
@@ -60,7 +64,7 @@ class TheMovieDBService {
       poster: this.parsePoster(rawMovie.poster_path),
       year: rawMovie.release_date
         ? parseInt(rawMovie.release_date.split('-')?.[0])
-        : undefined,
+        : null,
       countries: rawMovie.production_countries.map((one) => one.name),
       genres: rawMovie.genres.map((one) => one.name),
       rating: Math.round(rawMovie.vote_average),
@@ -72,7 +76,7 @@ class TheMovieDBService {
         .map((one) => one.name),
       stars: (credits?.cast ?? []).slice(0, 5).map((one) => one.name),
       trailerUrl: this.findTrailer(videos),
-    } as ParsedMovie;
+    };
   }
 
   async get(id: number) {
@@ -162,7 +166,7 @@ class TheMovieDBService {
     for await (const { title, year } of generator) {
       try {
         const matches = await this.search(title, year);
-        if (matches[0]) yield { id: matches[0].tmdbId, ...matches[0] };
+        if (matches[0]) yield matches[0];
       } catch {
         // ignore
       }

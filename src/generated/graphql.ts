@@ -1,6 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { User as UserModel, List as ListModel } from '@prisma/client';
-import { ParsedMovie as MovieModel, ParsedProviders as ProvidersModel } from 'src/services/TMDB/types';
+import { Movie as MovieModel, Providers as ProvidersModel } from 'src/services/Movie/TMDB/types';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -43,7 +43,6 @@ export type Movie = {
   description?: Maybe<Scalars['String']>;
   directors?: Maybe<Array<Scalars['String']>>;
   genres?: Maybe<Array<Scalars['String']>>;
-  id: Scalars['Int'];
   imdbId?: Maybe<Scalars['String']>;
   notes?: Maybe<Array<Note>>;
   poster?: Maybe<Scalars['String']>;
@@ -51,6 +50,7 @@ export type Movie = {
   rating?: Maybe<Scalars['Float']>;
   stars?: Maybe<Array<Scalars['String']>>;
   title: Scalars['String'];
+  tmdbId: Scalars['ID'];
   trailerUrl?: Maybe<Scalars['String']>;
   writers?: Maybe<Array<Scalars['String']>>;
   year?: Maybe<Scalars['Int']>;
@@ -82,7 +82,7 @@ export type Mutation = {
 
 export type MutationAddNoteToMovieArgs = {
   content: Scalars['String'];
-  movieId: Scalars['Int'];
+  movieTmdbId: Scalars['Int'];
 };
 
 
@@ -114,13 +114,13 @@ export type MutationImportMoviesFromImdbArgs = {
 
 export type MutationPullMovieArgs = {
   listId: Scalars['String'];
-  movieId: Scalars['Int'];
+  movieTmdbId: Scalars['Int'];
 };
 
 
 export type MutationPushMovieArgs = {
   listId: Scalars['String'];
-  movieId: Scalars['Int'];
+  movieTmdbId: Scalars['Int'];
 };
 
 
@@ -165,7 +165,7 @@ export type Note = {
 
 export type Provider = {
   __typename?: 'Provider';
-  id: Scalars['Int'];
+  id: Scalars['ID'];
   providerLogoUrl: Scalars['String'];
   providerName: Scalars['String'];
 };
@@ -174,7 +174,7 @@ export type Providers = {
   __typename?: 'Providers';
   buy?: Maybe<Array<Provider>>;
   flatrate?: Maybe<Array<Provider>>;
-  id: Scalars['Int'];
+  id: Scalars['ID'];
   rent?: Maybe<Array<Provider>>;
 };
 
@@ -193,7 +193,7 @@ export type QueryListArgs = {
 
 
 export type QueryMovieArgs = {
-  id: Scalars['Int'];
+  tmdbId: Scalars['Int'];
 };
 
 
@@ -389,7 +389,6 @@ export type MovieResolvers<ContextType = any, ParentType extends ResolversParent
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   directors?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   genres?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imdbId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   notes?: Resolver<Maybe<Array<ResolversTypes['Note']>>, ParentType, ContextType>;
   poster?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -397,6 +396,7 @@ export type MovieResolvers<ContextType = any, ParentType extends ResolversParent
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   stars?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tmdbId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   trailerUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   writers?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -404,14 +404,14 @@ export type MovieResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addNoteToMovie?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationAddNoteToMovieArgs, 'content' | 'movieId'>>;
+  addNoteToMovie?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationAddNoteToMovieArgs, 'content' | 'movieTmdbId'>>;
   createList?: Resolver<ResolversTypes['List'], ParentType, ContextType, RequireFields<MutationCreateListArgs, 'input'>>;
   deleteList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteListArgs, 'id'>>;
   deleteNoteFromMovie?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteNoteFromMovieArgs, 'noteId'>>;
   followUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationFollowUserArgs, 'id'>>;
   importMoviesFromImdb?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationImportMoviesFromImdbArgs, 'imdbIds' | 'listId'>>;
-  pullMovie?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationPullMovieArgs, 'listId' | 'movieId'>>;
-  pushMovie?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationPushMovieArgs, 'listId' | 'movieId'>>;
+  pullMovie?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationPullMovieArgs, 'listId' | 'movieTmdbId'>>;
+  pushMovie?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationPushMovieArgs, 'listId' | 'movieTmdbId'>>;
   saveList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveListArgs, 'id'>>;
   unfollowUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnfollowUserArgs, 'id'>>;
   unsaveList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnsaveListArgs, 'id'>>;
@@ -430,7 +430,7 @@ export type NoteResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type ProviderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Provider'] = ResolversParentTypes['Provider']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   providerLogoUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   providerName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -439,14 +439,14 @@ export type ProviderResolvers<ContextType = any, ParentType extends ResolversPar
 export type ProvidersResolvers<ContextType = any, ParentType extends ResolversParentTypes['Providers'] = ResolversParentTypes['Providers']> = {
   buy?: Resolver<Maybe<Array<ResolversTypes['Provider']>>, ParentType, ContextType>;
   flatrate?: Resolver<Maybe<Array<ResolversTypes['Provider']>>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   rent?: Resolver<Maybe<Array<ResolversTypes['Provider']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   list?: Resolver<Maybe<ResolversTypes['List']>, ParentType, ContextType, RequireFields<QueryListArgs, 'id'>>;
-  movie?: Resolver<ResolversTypes['Movie'], ParentType, ContextType, RequireFields<QueryMovieArgs, 'id'>>;
+  movie?: Resolver<ResolversTypes['Movie'], ParentType, ContextType, RequireFields<QueryMovieArgs, 'tmdbId'>>;
   search?: Resolver<Array<ResolversTypes['Movie']>, ParentType, ContextType, RequireFields<QuerySearchArgs, 'input'>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
 };

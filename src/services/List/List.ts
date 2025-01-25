@@ -1,9 +1,9 @@
 import { PrismaClient, User } from '@prisma/client';
 import { CreateListInput, UpdateListInput } from '../../generated/graphql';
-import { ParsedMovie } from '../TMDB/types';
+import { Movie } from '../Movie/TMDB/types';
 import { assertListOwner } from './validators';
-import TheMovieDBService from '../TMDB';
-import RecommendationAIService from '../RecommendationAI';
+import TheMovieDBService from '../Movie/TMDB';
+import RecommendationAIService from '../Movie/RecommendationAI';
 
 class ListService {
   prisma: PrismaClient;
@@ -67,11 +67,11 @@ class ListService {
     const generator = this.recommendationAI.findSimilar(list, {
       user: currentUser,
     });
-    let recommendations: ParsedMovie[] = [];
+    let recommendations: Movie[] = [];
     for await (const { title, year } of generator) {
       try {
         const match = (await this.tmdb.search(title, year))[0];
-        match && recommendations.push();
+        match && recommendations.push(match);
       } catch {
         // ignore
       }
@@ -173,7 +173,7 @@ class ListService {
     return true;
   }
 
-  async pushMovie(listId: string, movie: ParsedMovie, currentUserId: string) {
+  async pushMovie(listId: string, movie: Movie, currentUserId: string) {
     assertListOwner(await this.get(listId), currentUserId);
     await this.prisma.list.update({
       where: { id: listId },
@@ -190,14 +190,14 @@ class ListService {
     return true;
   }
 
-  async pullMovie(listId: string, movieId: number, currentUserId: string) {
+  async pullMovie(listId: string, tmdbId: number, currentUserId: string) {
     assertListOwner(await this.get(listId), currentUserId);
     await this.prisma.list.update({
       where: { id: listId },
       data: {
         recommendations: { set: [] },
         movies: {
-          disconnect: { tmdbId: movieId },
+          disconnect: { tmdbId },
         },
       },
     });

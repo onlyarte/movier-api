@@ -1,6 +1,5 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { DateTimeResolver } from 'graphql-scalars';
-import { uniqBy } from 'lodash';
 import { Resolvers } from './generated/graphql';
 import { GraphQLContext } from './context';
 import { makeObjectResolvers } from './utils/generators';
@@ -8,7 +7,7 @@ import { assertCurrentUser } from './utils/validators';
 
 /// <reference path="../node_modules/graphql-import-node/register.d.ts" />
 import typeDefs from './schema.graphql';
-import { ParsedMovie } from './services/TMDB/types';
+import { handleSearchGQL } from './services/Movie/handleSearch';
 
 type ResolversWithContext = Resolvers<GraphQLContext>;
 
@@ -22,33 +21,9 @@ export const resolvers: ResolversWithContext = {
       return context.services.list.get(args.id);
     },
     movie: (parent, args, context, info) => {
-      return context.services.tmdb.get(args.id);
+      return context.services.tmdb.get(args.tmdbId);
     },
-    search: async (parent, args, context, info) => {
-      const direct = await context.services.tmdb.search(args.input);
-      if (direct[0]?.title.toLowerCase().startsWith(args.input.toLowerCase())) {
-        return direct;
-      }
-
-      try {
-        const generator = context.services.recommendationAI.search(args.input, {
-          user: context.currentUser,
-        });
-        const results: ParsedMovie[] = [];
-        for await (const { title, year } of generator) {
-          try {
-            const match = (await context.services.tmdb.search(title, year))[0];
-            match && results.push(match);
-          } catch {
-            // ignore
-          }
-        }
-        return results;
-      } catch (error) {
-        console.error(error);
-        return direct;
-      }
-    },
+    search: handleSearchGQL,
   },
   Mutation: {
     followUser: async (parent, args, context, info) => {
@@ -91,7 +66,7 @@ export const resolvers: ResolversWithContext = {
     },
     pushMovie: async (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
-      const movie = await context.services.tmdb.get(args.movieId);
+      const movie = await context.services.tmdb.get(args.movieTmdbId);
       return context.services.list.pushMovie(
         args.listId,
         movie,
@@ -102,7 +77,7 @@ export const resolvers: ResolversWithContext = {
       const currentUser = assertCurrentUser(context);
       return context.services.list.pullMovie(
         args.listId,
-        args.movieId,
+        args.movieTmdbId,
         currentUser.id
       );
     },
@@ -122,7 +97,7 @@ export const resolvers: ResolversWithContext = {
     },
     addNoteToMovie: async (parent, args, context, info) => {
       const currentUser = assertCurrentUser(context);
-      const movie = await context.services.tmdb.get(args.movieId);
+      const movie = await context.services.tmdb.get(args.movieTmdbId);
       return context.services.note.create(args.content, movie, currentUser.id);
     },
     deleteNoteFromMovie: async (parent, args, context, info) => {
@@ -132,9 +107,6 @@ export const resolvers: ResolversWithContext = {
     },
   },
   Movie: {
-    id: (parent) => {
-      return parent.tmdbId;
-    },
     notes: (parent, args, context, info) => {
       return context.services.note.findByMovieId(parent.tmdbId);
     },
@@ -145,10 +117,11 @@ export const resolvers: ResolversWithContext = {
   List: {
     ...makeObjectResolvers('list', ['owner', 'movies']),
     recommendations: async (parent, args, context, info) => {
-      return context.services.list.getRecommendations(
+      const movies = await context.services.list.getRecommendations(
         parent.id,
         context.currentUser
       );
+      return movies.map(({ id, ...movie }) => ({ ...movie, id: movie.tmdbId }));
     },
   },
   User: makeObjectResolvers('user', [

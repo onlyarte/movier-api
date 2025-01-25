@@ -7,7 +7,7 @@ export const streamJson = async <T extends {}>(
   reply.raw.writeHead(200, {
     'Content-Type': 'application/json',
     'Transfer-Encoding': 'chunked',
-    'Cache-Control': 'no-transform',
+    'Cache-Control': 'max-age=86400, no-transform',
     'Content-Encoding': 'identity',
   });
   reply.raw.flushHeaders();

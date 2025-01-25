@@ -1,10 +1,10 @@
 import { FastifyRequest } from 'fastify';
 import { PrismaClient, User, UserLocation } from '@prisma/client';
 
-import TMDBService from './services/TMDB';
+import TMDBService from './services/Movie/TMDB';
 import UserService from './services/User';
 import ListService from './services/List';
-import RecommendationAIService from './services/RecommendationAI';
+import RecommendationAIService from './services/Movie/RecommendationAI';
 import config from './config';
 import NoteService from './services/Note';
 import StorageService from './services/Storage';

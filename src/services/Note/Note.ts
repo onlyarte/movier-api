@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { assert } from 'console';
 import { assertNoteOwner } from './validators';
-import { ParsedMovie } from '../TMDB/types';
+import { Movie } from '../Movie/TMDB/types';
 
 class NoteService {
   prisma: PrismaClient;
@@ -16,13 +15,13 @@ class NoteService {
     });
   }
 
-  async findByMovieId(movieId: number) {
+  async findByMovieId(movieTmdbId: number) {
     return this.prisma.movie
-      .findUnique({ where: { tmdbId: movieId } })
+      .findUnique({ where: { tmdbId: movieTmdbId } })
       .notes({ orderBy: { createdAt: 'desc' } });
   }
 
-  async create(content: string, movie: ParsedMovie, userId: string) {
+  async create(content: string, movie: Movie, userId: string) {
     return this.prisma.note.create({
       data: {
         content,

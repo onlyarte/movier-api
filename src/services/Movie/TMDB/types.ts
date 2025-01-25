@@ -1,3 +1,5 @@
+import { Movie as PrismaMovie } from '@prisma/client';
+
 export type Configuration = {
   images: {
     base_url: string;
@@ -80,31 +82,20 @@ export type RawProviders = {
   >[];
 };
 
-export type ParsedProvider = {
+export type Provider = {
   id: number;
   providerName: string;
   providerLogoUrl: string;
 };
 
-export type ParsedProviders = {
+export type Providers = {
   id: number;
-  flatrate: ParsedProvider[];
-  rent: ParsedProvider[];
-  buy: ParsedProvider[];
+  flatrate: Provider[];
+  rent: Provider[];
+  buy: Provider[];
 };
 
-export type ParsedMovie = {
-  tmdbId: number;
-  imdbId?: string | null;
-  title: string;
-  description?: string | null;
-  poster?: string | null;
-  year?: number | null;
-  countries: string[];
-  genres: string[];
-  directors: string[];
-  writers: string[];
-  stars: string[];
-  rating?: number | null;
-  trailerUrl?: string | null;
-};
+export type Movie = Omit<
+  PrismaMovie,
+  'id' | 'listIds' | 'recommendedForListIds'
+>;
