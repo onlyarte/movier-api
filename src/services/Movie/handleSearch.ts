@@ -40,6 +40,12 @@ const QueryParams = z.object({
   input: z.string(),
 });
 
+export const toGenerator = async function* <T = any>(array: T[]) {
+  for (const item of array) {
+    yield item;
+  }
+};
+
 export const handleSearchRest = async (
   request: FastifyRequest,
   reply: FastifyReply
@@ -48,17 +54,18 @@ export const handleSearchRest = async (
 
   const args = QueryParams.parse(request.query);
 
-  const directMatches = await context.services.tmdb.search(args.input);
-  if (
-    directMatches[0]?.title.toLowerCase().startsWith(args.input.toLowerCase())
-  ) {
-    reply.header('Transfer-Encoding', '');
-    reply.send(directMatches);
-    return;
-  }
+  const titleSearchResults = await context.services.tmdb.search(args.input);
+  const isMatchFound = titleSearchResults[0]?.title
+    .toLowerCase()
+    .startsWith(args.input.toLowerCase());
 
-  const generator = context.services.recommendationAI.search(args.input, {
-    user: context.currentUser,
-  });
-  streamJson(context.services.tmdb.findAll(generator), reply);
+  const generator = isMatchFound
+    ? toGenerator(titleSearchResults)
+    : context.services.tmdb.findAll(
+        context.services.recommendationAI.search(args.input, {
+          user: context.currentUser,
+        })
+      );
+
+  streamJson(generator, reply);
 };

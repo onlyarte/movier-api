@@ -34,23 +34,6 @@ async function main() {
 
   server.route({
     method: 'GET',
-    url: '/geo',
-    handler: (request, reply) => {
-      const country = request.headers['x-appengine-country'];
-      const region = request.headers['x-appengine-region'];
-      const city = request.headers['x-appengine-city'];
-      const ip = request.headers['x-forwarded-for'];
-      reply.send({
-        country,
-        region,
-        city,
-        ip,
-      });
-    },
-  });
-
-  server.route({
-    method: 'GET',
     url: '/graphql',
     handler: async (request, reply) => {
       reply.header('Content-Type', 'text/html');
